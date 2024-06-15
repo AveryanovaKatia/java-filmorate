@@ -25,18 +25,15 @@ public class UserController {
     @GetMapping
     public Collection<User> findAll() {
         log.info("Запрос на получение списка пользователей");
-        return users.values().stream()
-                .peek(user -> {
-                    if (Objects.isNull(user.getName())) {
-                        user.setName(user.getLogin());
-                    }
-                })
-                .collect(Collectors.toList());
+        return users.values();
     }
 
     @PostMapping
     public User create(@Valid @RequestBody User user) {
         validLogin(user.getLogin());
+        if (Objects.isNull(user.getName())) {
+            user.setName(user.getLogin());
+        }
         user.setId(getNextId());
         users.put(user.getId(), user);
         log.info("Пользователь успешно добавлен под id {}", user.getId());
