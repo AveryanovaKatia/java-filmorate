@@ -10,8 +10,8 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import ru.yandex.practicum.filmorate.controller.FilmController;
+import ru.yandex.practicum.filmorate.dto.FilmDTO;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
-import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
 import java.time.LocalDate;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -50,14 +50,15 @@ public class FilmControllerTest {
                 .andExpect(status().isOk());
     }
 
-    @Test // нельзя добавить фильм с неккоректной датой релиза
-    public void createWithBadTimeReleaseTest() {
-        film.setName("Harry Potter and the Philosopher's Stone");
-        film.setDescription("The boy who lived");
-        film.setDuration(121L);
-        film.setReleaseDate(LocalDate.of(1001, 11, 22));
-        Assertions.assertThrows(ValidationException.class, () -> filmController.create(film),
-                "Не работает проверка на добавление корректной даты релиза");
+    @Test // нельзя создать фильм с неккоректной датой релиза
+    public void validBadDateReleaseTest() throws Exception {
+        this.mockMvc.perform(MockMvcRequestBuilders
+                        .post("/films")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"name\":\"Harry Potter and the Philosopher's Stone\","
+                                + "\"description\":\"The boy who lived\","
+                                + "\"releaseDate\":\"1001-11-22\",\"duration\":121}"))
+                .andExpect(status().isBadRequest());
     }
 
     @Test // обновление фильма с корректными полями
@@ -75,7 +76,7 @@ public class FilmControllerTest {
         film1.setId(1L);
         film1.setReleaseDate(LocalDate.of(2002, 11, 14));
         filmController.update(film1);
-        Film filmTest = filmController.getFilms().get(1L);
+        FilmDTO filmTest = filmController.findAll().getFirst();
         Assertions.assertEquals(filmTest.getDuration(), 174, "Фильм не обновлен");
     }
 
@@ -130,4 +131,6 @@ public class FilmControllerTest {
                                 + "\"releaseDate\":\"2001-11-22\",\"duration\":121}"))
                 .andExpect(status().isBadRequest());
     }
+
+
 }

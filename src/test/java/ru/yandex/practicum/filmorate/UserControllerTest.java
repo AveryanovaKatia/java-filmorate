@@ -10,11 +10,10 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import ru.yandex.practicum.filmorate.controller.UserController;
+import ru.yandex.practicum.filmorate.dto.UserDTO;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
-
 import java.time.LocalDate;
-
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @FieldDefaults(level = AccessLevel.PRIVATE)
@@ -89,7 +88,7 @@ public class UserControllerTest {
         user1.setId(1L);
         user1.setBirthday(LocalDate.of(1993, 12, 15));
         userController.update(user1);
-        User userTest = userController.getUsers().get(1L);
+        UserDTO userTest = userController.findAll().getFirst();
         Assertions.assertEquals(userTest.getName(), "Lena", "Имя не обновлено");
     }
 
