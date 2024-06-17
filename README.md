@@ -1,2 +1,2 @@
 # java-filmorate
-Template repository for Filmorate project.
+Мой первый проект с Maven, Lombok и SLF4J
