@@ -63,7 +63,7 @@ public class UserService {
 
     public List<UserDTO> getMutualFriends(long id, long otherId) {
         validUserEqualsFriend(id, otherId, "Нельзя проверять соответствие друзей у себя и себя");
-        List<UserDTO> friends = userStorage.getMutualFriends (id, otherId);
+        List<UserDTO> friends = userStorage.getMutualFriends(id, otherId);
         log.info("Общие друзья пользователь с id {} и пользователя с id {}", otherId, id);
         return friends;
     }
@@ -76,7 +76,7 @@ public class UserService {
     }
 
     private void validUserEqualsFriend(Long id, Long friendId, String message) {
-        if(Objects.equals(id, friendId)) {
+        if (Objects.equals(id, friendId)) {
             log.warn(message);
             throw new ValidationException(message);
         }
