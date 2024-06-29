@@ -62,6 +62,6 @@ public class UserController {
     @GetMapping("/{id}/friends/common/{otherId}")
     @ResponseStatus(HttpStatus.OK)
     public List<UserDTO> getMutualFriends(long id, long otherId) {
-        return userService.getMutualFriends (id, otherId);
+        return userService.getMutualFriends(id, otherId);
     }
 }
