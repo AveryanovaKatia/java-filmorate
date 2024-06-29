@@ -1,64 +1,57 @@
 package ru.yandex.practicum.filmorate.controller;
 
 import jakarta.validation.Valid;
-import lombok.extern.slf4j.Slf4j;
+import jakarta.validation.constraints.Positive;
+import lombok.AllArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.dto.FilmDTO;
-import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.group.UpdateGroup;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.service.FilmService;
+
 import java.util.*;
 
 @RestController
 @RequestMapping("/films")
-@Slf4j
+@AllArgsConstructor
 public class FilmController {
-    private final Map<Long, Film> films = new HashMap<>();
+    private FilmService filmService;
 
     @GetMapping
+    @ResponseStatus(HttpStatus.OK)
     public List<FilmDTO> findAll() {
-        log.info("Запрос на получение списка фильмов");
-        List<FilmDTO> allFilmDTO = new ArrayList<>();
-        films.values().forEach(film -> allFilmDTO.add(getDTO(film)));
-        return allFilmDTO;
+        return filmService.findAll();
     }
 
     @PostMapping
+    @ResponseStatus(HttpStatus.OK)
     public FilmDTO create(@Valid @RequestBody Film film) {
-        film.setId(getNextId());
-        films.put(film.getId(), film);
-        log.info("Фильм успешно добавлен под id {}", film.getId());
-        return getDTO(film);
+        return filmService.create(film);
     }
 
     @PutMapping
+    @ResponseStatus(HttpStatus.CREATED)
     public FilmDTO update(@Validated(UpdateGroup.class) @RequestBody Film film) {
-        if (films.containsKey(film.getId())) {
-            films.put(film.getId(), film);
-            log.info("Фильм с id {} успешно обновлен", film.getId());
-            return getDTO(film);
-        }
-        log.error("Фильма с id = {} нет.", film.getId());
-        throw new NotFoundException("Фильма с id = {} нет." + film.getId());
+        return filmService.update(film);
     }
 
-    private Long getNextId() {
-        long currentMaxId = films.keySet()
-                .stream()
-                .mapToLong(id -> id)
-                .max()
-                .orElse(0);
-        return ++currentMaxId;
+    @PutMapping("/{id}/like/{userId}")
+    @ResponseStatus(HttpStatus.OK)
+    public Set<Long> putLike(@PathVariable @Positive Long id, @PathVariable @Positive Long userId) {
+        return filmService.putLike(id, userId);
     }
 
-    private FilmDTO getDTO(Film film) {
-        FilmDTO filmDTO = new FilmDTO();
-        filmDTO.setId(film.getId());
-        filmDTO.setName(film.getName());
-        filmDTO.setDescription(film.getDescription());
-        filmDTO.setReleaseDate(film.getReleaseDate());
-        filmDTO.setDuration(film.getDuration());
-        return filmDTO;
+    @DeleteMapping("/{id}/like/{userId}")
+    @ResponseStatus(HttpStatus.OK)
+    public Set<Long> deleteLike(@PathVariable @Positive Long id, @PathVariable @Positive Long userId) {
+        return filmService.deleteLike(id, userId);
+    }
+
+    @GetMapping("/popular?count={count}")
+    @ResponseStatus(HttpStatus.OK)
+    public List<FilmDTO> getBestFilm(@RequestParam(defaultValue = "10") @Positive Long count) {
+        return filmService.getBestFilm(count);
     }
 }
