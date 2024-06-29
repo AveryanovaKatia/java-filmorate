@@ -13,7 +13,7 @@ public interface FilmStorage {
 
     public FilmDTO update(Film film);
 
-    Set<Long> putLike (Long id, Long userId);
+    Set<Long> putLike(Long id, Long userId);
 
     Set<Long> deleteLike(Long id, Long userId);
 

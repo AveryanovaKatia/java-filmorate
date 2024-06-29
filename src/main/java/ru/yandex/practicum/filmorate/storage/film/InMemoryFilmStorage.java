@@ -30,7 +30,7 @@ public class InMemoryFilmStorage implements FilmStorage {
     }
 
     @Override
-    public Set<Long> putLike (Long id, Long userId) {
+    public Set<Long> putLike(Long id, Long userId) {
         films.get(id).getLikes().add(id);
         return films.get(id).getLikes();
     }

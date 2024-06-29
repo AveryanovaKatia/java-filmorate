@@ -10,7 +10,6 @@ import ru.yandex.practicum.filmorate.dto.UserDTO;
 import ru.yandex.practicum.filmorate.group.UpdateGroup;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.UserService;
-
 import java.util.*;
 
 @RestController
@@ -44,25 +43,25 @@ public class UserController {
 
     @PutMapping("/{id}/friends/{friendId}")
     @ResponseStatus(HttpStatus.OK)
-    public Set<Long> addNewFriend (@PathVariable @Positive Long id, @PathVariable @Positive Long friendId) {
+    public Set<Long> addNewFriend(@PathVariable @Positive Long id, @PathVariable @Positive Long friendId) {
         return userService.addNewFriend(id, friendId);
     }
 
     @DeleteMapping("/{id}/friends/{friendId}")
     @ResponseStatus(HttpStatus.OK)
-    public Set<Long> deleteFriend (@PathVariable @Positive Long id, @PathVariable @Positive Long friendId) {
+    public Set<Long> deleteFriend(@PathVariable @Positive Long id, @PathVariable @Positive Long friendId) {
         return userService.deleteFriend(id, friendId);
     }
 
     @GetMapping("/{id}/friends")
     @ResponseStatus(HttpStatus.OK)
-    public List<UserDTO> getAllFriends (@PathVariable @Positive Long id) {
+    public List<UserDTO> getAllFriends(@PathVariable @Positive Long id) {
         return userService.getAllFriends(id);
     }
 
     @GetMapping("/{id}/friends/common/{otherId}")
     @ResponseStatus(HttpStatus.OK)
-    public List<UserDTO> getMutualFriends (long id, long otherId) {
+    public List<UserDTO> getMutualFriends(long id, long otherId) {
         return userService.getMutualFriends (id, otherId);
     }
 }

@@ -29,8 +29,7 @@ public class FilmControllerTest {
     public void beforeEachTest() {
         filmController = new FilmController(new FilmService(new InMemoryFilmStorage(), new InMemoryUserStorage()));
         mockMvc = MockMvcBuilders
-                .standaloneSetup(new FilmController(new FilmService
-                        (new InMemoryFilmStorage(), new InMemoryUserStorage())))
+                .standaloneSetup(filmController)
                 .build();
         film = new Film();
     }
