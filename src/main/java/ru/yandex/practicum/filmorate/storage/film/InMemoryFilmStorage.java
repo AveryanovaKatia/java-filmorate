@@ -43,6 +43,9 @@ public class InMemoryFilmStorage implements FilmStorage {
 
     @Override
     public Optional<List<FilmDTO>> getBestFilm(Long count) {
+        if (films.isEmpty()) {
+            return Optional.empty();
+        }
         return Optional.of(films.values().stream()
                 .sorted(Comparator.comparing((Film film) -> film.getLikes().size()).reversed())
                 .limit(count)

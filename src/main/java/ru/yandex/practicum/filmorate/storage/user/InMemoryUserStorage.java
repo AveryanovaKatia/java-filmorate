@@ -51,7 +51,7 @@ public class InMemoryUserStorage implements UserStorage {
     }
 
    @Override
-    public Optional<List<UserDTO>> getMutualFriends(Long id, Long otherId) {
+    public Optional<Collection<UserDTO>>getMutualFriends(Long id, Long otherId) {
         Set<Long> user = users.get(id).getFriends();
         Set<Long> other = users.get(otherId).getFriends();
         Set<Long> mutualFriendTds = user.stream().filter(other::contains).collect(Collectors.toSet());

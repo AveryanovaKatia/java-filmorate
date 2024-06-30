@@ -7,4 +7,4 @@ server:
   port: 8080
 
 logging.level:
-  org.zalando.logbook: TRACE
+  org.zalando.logbook: WARN

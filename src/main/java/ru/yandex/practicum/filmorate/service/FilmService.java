@@ -60,9 +60,6 @@ public class FilmService {
 
     public Optional<List<FilmDTO>> getBestFilm(Long count) {
         log.info("Запрос на получение списка лучших фильмов");
-        if (filmStorage.getFilms().isEmpty()) {
-            return Optional.empty();
-        }
         if (filmStorage.getFilms().size() < count) {
             return filmStorage.getBestFilm((long) filmStorage.getFilms().size());
         }

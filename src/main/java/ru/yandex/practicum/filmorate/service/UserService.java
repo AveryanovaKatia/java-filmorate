@@ -12,6 +12,8 @@ import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.group.UpdateGroup;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.user.UserStorage;
+
+import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -74,9 +76,9 @@ public class UserService {
         return friends;
     }
 
-    public Optional<List<UserDTO>> getMutualFriends(Long id, Long otherId) {
+    public Optional<Collection<UserDTO>> getMutualFriends(Long id, Long otherId) {
         validUserEqualsFriend(id, otherId, "Нельзя проверять соответствие друзей у себя и себя");
-        Optional<List<UserDTO>> friends = userStorage.getMutualFriends(id, otherId);
+        Optional<Collection<UserDTO>> friends = userStorage.getMutualFriends(id, otherId);
         log.info("Общие друзья пользователь с id {} и пользователя с id {}", otherId, id);
         return friends;
     }

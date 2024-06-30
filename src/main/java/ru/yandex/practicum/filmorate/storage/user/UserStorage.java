@@ -24,7 +24,7 @@ public interface UserStorage {
 
     Optional<List<UserDTO>> getAllFriends(Long id);
 
-    Optional<List<UserDTO>> getMutualFriends(Long id, Long otherId);
+    Optional<Collection<UserDTO>> getMutualFriends(Long id, Long otherId);
 
     Map<Long, User> getUsers();
 }
