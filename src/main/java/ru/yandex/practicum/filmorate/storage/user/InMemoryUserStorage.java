@@ -9,10 +9,10 @@ import java.util.stream.Collectors;
 @Component
 public class InMemoryUserStorage implements UserStorage {
     @Override
-    public List<UserDTO> findAll() {
+    public Optional<List<UserDTO>> findAll() {
         List<UserDTO> allUserDTO = new ArrayList<>();
         users.values().forEach(user -> allUserDTO.add(getDTO(user)));
-        return allUserDTO;
+        return Optional.of(allUserDTO);
     }
 
     @Override
@@ -32,30 +32,33 @@ public class InMemoryUserStorage implements UserStorage {
     }
 
     @Override
-    public Set<Long> addNewFriend(Long id, Long friendId) {
-        users.get(id).getFriends().add(friendId);
-        users.get(friendId).getFriends().add(id);
-        return users.get(id).getFriends();
+    public UserDTO addNewFriend(Long id, Long friendId) {
+        users.get(id).setFriends(friendId);
+        users.get(friendId).setFriends(id);
+        return getDTO(users.get(id));
     }
 
     @Override
-    public Set<Long> deleteFriend(Long id, Long friendId) {
+    public UserDTO deleteFriend(Long id, Long friendId) {
         users.get(id).getFriends().remove(friendId);
         users.get(friendId).getFriends().remove(id);
-        return users.get(id).getFriends();
+        return getDTO(users.get(id));
     }
 
     @Override
-    public List<UserDTO> getAllFriends(long id) {
-        return users.get(id).getFriends().stream().map(users::get).map(this::getDTO).toList();
+    public Optional<List<UserDTO>> getAllFriends(Long id) {
+        return Optional.of(users.get(id).getFriends().stream().map(users::get).map(this::getDTO).toList());
     }
 
    @Override
-    public List<UserDTO> getMutualFriends(long id, long otherId) {
+    public Optional<List<UserDTO>> getMutualFriends(Long id, Long otherId) {
         Set<Long> user = users.get(id).getFriends();
         Set<Long> other = users.get(otherId).getFriends();
         Set<Long> mutualFriendTds = user.stream().filter(other::contains).collect(Collectors.toSet());
-        return mutualFriendTds.stream().map(users::get).map(this::getDTO).toList();
+        if (mutualFriendTds.isEmpty()) {
+            return Optional.empty();
+        }
+        return Optional.of(mutualFriendTds.stream().map(users::get).map(this::getDTO).toList());
     }
 
     @Override

@@ -16,6 +16,8 @@ import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.UserService;
 import ru.yandex.practicum.filmorate.storage.user.InMemoryUserStorage;
 import java.time.LocalDate;
+import java.util.List;
+
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @FieldDefaults(level = AccessLevel.PRIVATE)
@@ -82,8 +84,8 @@ public class UserControllerTest {
         user1.setId(1L);
         user1.setBirthday(LocalDate.of(1993, 12, 15));
         userController.update(user1);
-        UserDTO userTest = userController.findAll().getFirst();
-        Assertions.assertEquals(userTest.getName(), "Lena", "Имя не обновлено");
+        List<UserDTO> userTest = userController.findAll().get();
+        Assertions.assertEquals(userTest.getFirst().getName(), "Lena", "Имя не обновлено");
     }
 
     @Test // нельзя передать некорректно имейл

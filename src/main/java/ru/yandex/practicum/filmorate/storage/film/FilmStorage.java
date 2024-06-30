@@ -7,17 +7,17 @@ import java.util.*;
 public interface FilmStorage {
     Map<Long, Film> films = new HashMap<>();
 
-    public List<FilmDTO> findAll();
+    Optional<List<FilmDTO>>  findAll();
 
-    public FilmDTO create(Film film);
+    FilmDTO create(Film film);
 
-    public FilmDTO update(Film film);
+    FilmDTO update(Film film);
 
-    Set<Long> putLike(Long id, Long userId);
+    FilmDTO putLike(Long id, Long userId);
 
-    Set<Long> deleteLike(Long id, Long userId);
+    FilmDTO deleteLike(Long id, Long userId);
 
-    List<FilmDTO> getBestFilm(Long count);
+    Optional<List<FilmDTO>> getBestFilm(Long count);
 
     Map<Long, Film> getFilms();
 }

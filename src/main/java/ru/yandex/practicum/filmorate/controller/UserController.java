@@ -14,7 +14,6 @@ import java.util.*;
 
 @RestController
 @RequestMapping("/users")
-
 public class UserController {
     private final UserService userService;
 
@@ -25,43 +24,43 @@ public class UserController {
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    public List<UserDTO> findAll() {
+    public Optional<List<UserDTO>> findAll() {
        return userService.findAll();
     }
 
     @PostMapping
-    @ResponseStatus(HttpStatus.OK)
+    @ResponseStatus(HttpStatus.CREATED)
     public UserDTO create(@Valid @RequestBody User user) {
         return userService.create(user);
     }
 
     @PutMapping
-    @ResponseStatus(HttpStatus.CREATED)
+    @ResponseStatus(HttpStatus.OK)
     public UserDTO update(@Validated(UpdateGroup.class) @RequestBody User user) {
         return userService.update(user);
     }
 
     @PutMapping("/{id}/friends/{friendId}")
     @ResponseStatus(HttpStatus.OK)
-    public Set<Long> addNewFriend(@PathVariable @Positive Long id, @PathVariable @Positive Long friendId) {
+    public UserDTO addNewFriend(@PathVariable @Positive Long id, @PathVariable @Positive Long friendId) {
         return userService.addNewFriend(id, friendId);
     }
 
     @DeleteMapping("/{id}/friends/{friendId}")
     @ResponseStatus(HttpStatus.OK)
-    public Set<Long> deleteFriend(@PathVariable @Positive Long id, @PathVariable @Positive Long friendId) {
+    public UserDTO deleteFriend(@PathVariable @Positive Long id, @PathVariable @Positive Long friendId) {
         return userService.deleteFriend(id, friendId);
     }
 
     @GetMapping("/{id}/friends")
     @ResponseStatus(HttpStatus.OK)
-    public List<UserDTO> getAllFriends(@PathVariable @Positive Long id) {
+    public Optional<List<UserDTO>> getAllFriends(@PathVariable @Positive Long id) {
         return userService.getAllFriends(id);
     }
 
     @GetMapping("/{id}/friends/common/{otherId}")
     @ResponseStatus(HttpStatus.OK)
-    public List<UserDTO> getMutualFriends(long id, long otherId) {
+    public Optional<List<UserDTO>> getMutualFriends(Long id, Long otherId) {
         return userService.getMutualFriends(id, otherId);
     }
 }

@@ -1,6 +1,8 @@
 package ru.yandex.practicum.filmorate.service;
 
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.dto.FilmDTO;
@@ -9,17 +11,21 @@ import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
 import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 import java.util.List;
-import java.util.Set;
+import java.util.Optional;
 
 @Service
 @Slf4j
 @AllArgsConstructor
+@FieldDefaults(makeFinal = true, level = AccessLevel.PRIVATE)
 public class FilmService {
-    private FilmStorage filmStorage;
-    private UserStorage userStorage;
+    FilmStorage filmStorage;
+    UserStorage userStorage;
 
-    public List<FilmDTO> findAll() {
+    public Optional<List<FilmDTO>> findAll() {
         log.info("Запрос на получение списка фильмов");
+        if (filmStorage.getFilms().isEmpty()) {
+            return Optional.empty();
+        }
         return filmStorage.findAll();
     }
 
@@ -36,24 +42,27 @@ public class FilmService {
         return filmDTO;
     }
 
-    public Set<Long> putLike(Long id, Long userId) {
+    public FilmDTO putLike(Long id, Long userId) {
         validId(id);
         validIdUser(userId);
-        Set<Long> like = filmStorage.putLike(id, userId);
+        FilmDTO film = filmStorage.putLike(id, userId);
         log.info("Пользователь с id {} поставил like фильму с id {}", userId, id);
-        return like;
+        return film;
     }
 
-    public Set<Long> deleteLike(Long id, Long userId) {
+    public FilmDTO deleteLike(Long id, Long userId) {
         validId(id);
         validIdUser(userId);
-        Set<Long> like = filmStorage.deleteLike(id, userId);
+        FilmDTO film = filmStorage.deleteLike(id, userId);
         log.info("Пользователь с id {} удалил like у фильма с id {}", userId, id);
-        return like;
+        return film;
     }
 
-    public List<FilmDTO> getBestFilm(Long count) {
+    public Optional<List<FilmDTO>> getBestFilm(Long count) {
         log.info("Запрос на получение списка лучших фильмов");
+        if (filmStorage.getFilms().isEmpty()) {
+            return Optional.empty();
+        }
         if (filmStorage.getFilms().size() < count) {
             return filmStorage.getBestFilm((long) filmStorage.getFilms().size());
         }

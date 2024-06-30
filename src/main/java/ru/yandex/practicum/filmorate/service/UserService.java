@@ -14,7 +14,7 @@ import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 import java.util.List;
 import java.util.Objects;
-import java.util.Set;
+import java.util.Optional;
 
 @Slf4j
 @Service
@@ -22,8 +22,11 @@ import java.util.Set;
 public class UserService {
     private final UserStorage userStorage;
 
-    public List<UserDTO> findAll() {
+    public Optional<List<UserDTO>> findAll() {
         log.info("Запрос на получение списка пользователей");
+        if(userStorage.getUsers().isEmpty()) {
+            return Optional.empty();
+        }
         return userStorage.findAll();
     }
 
@@ -42,28 +45,38 @@ public class UserService {
         return userDTO;
     }
 
-    public Set<Long> addNewFriend(Long id, Long friendId) {
+    public UserDTO addNewFriend(Long id, Long friendId) {
         validUserEqualsFriend(id, friendId, "Нельзя добавить пользователя в друзья к самому себе");
         log.info("Пользователь с id {} успешно добавлен в друзья к пользователю с id {}", friendId, id);
         return userStorage.addNewFriend(id, friendId);
     }
 
-    public Set<Long> deleteFriend(Long id, Long friendId) {
+    public UserDTO deleteFriend(Long id, Long friendId) {
         validUserEqualsFriend(id, friendId, "Нельзя удалить пользователя из друзей у самого себя");
+        if(!userStorage.getUsers().get(id).getFriends().contains(friendId)) {
+            log.warn("Нельзя удалить пользователя {} из друзей у пользователя с id {} если они не дружат",
+                    friendId, id);
+            throw new NotFoundException(
+                    "Нельзя удалить пользователя {} из друзей у пользователя с id {} если они не дружат"
+                            + friendId + id);
+        }
         log.info("Пользователь с id {} успешно удален из друзей у пользователя с id {}", friendId, id);
         return userStorage.deleteFriend(id, friendId);
     }
 
-    public List<UserDTO> getAllFriends(long id) {
+    public Optional<List<UserDTO>> getAllFriends(Long id) {
         validId(id);
-        List<UserDTO> friends = userStorage.getAllFriends(id);
+        if(Objects.isNull(userStorage.getUsers().get(id).getFriends())) {
+            return Optional.empty();
+        }
+        Optional<List<UserDTO>> friends = userStorage.getAllFriends(id);
         log.info("Запрос на получение всех друзей пользователя с id {}", id);
         return friends;
     }
 
-    public List<UserDTO> getMutualFriends(long id, long otherId) {
+    public Optional<List<UserDTO>> getMutualFriends(Long id, Long otherId) {
         validUserEqualsFriend(id, otherId, "Нельзя проверять соответствие друзей у себя и себя");
-        List<UserDTO> friends = userStorage.getMutualFriends(id, otherId);
+        Optional<List<UserDTO>> friends = userStorage.getMutualFriends(id, otherId);
         log.info("Общие друзья пользователь с id {} и пользователя с id {}", otherId, id);
         return friends;
     }

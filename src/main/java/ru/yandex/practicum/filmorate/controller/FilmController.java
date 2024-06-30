@@ -20,37 +20,37 @@ public class FilmController {
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    public List<FilmDTO> findAll() {
+    public Optional<List<FilmDTO>> findAll() {
         return filmService.findAll();
     }
 
     @PostMapping
-    @ResponseStatus(HttpStatus.OK)
+    @ResponseStatus(HttpStatus.CREATED)
     public FilmDTO create(@Valid @RequestBody Film film) {
         return filmService.create(film);
     }
 
     @PutMapping
-    @ResponseStatus(HttpStatus.CREATED)
+    @ResponseStatus(HttpStatus.OK)
     public FilmDTO update(@Validated(UpdateGroup.class) @RequestBody Film film) {
         return filmService.update(film);
     }
 
     @PutMapping("/{id}/like/{userId}")
     @ResponseStatus(HttpStatus.OK)
-    public Set<Long> putLike(@PathVariable @Positive Long id, @PathVariable @Positive Long userId) {
+    public FilmDTO putLike(@PathVariable @Positive Long id, @PathVariable @Positive Long userId) {
         return filmService.putLike(id, userId);
     }
 
     @DeleteMapping("/{id}/like/{userId}")
     @ResponseStatus(HttpStatus.OK)
-    public Set<Long> deleteLike(@PathVariable @Positive Long id, @PathVariable @Positive Long userId) {
+    public FilmDTO deleteLike(@PathVariable @Positive Long id, @PathVariable @Positive Long userId) {
         return filmService.deleteLike(id, userId);
     }
 
     @GetMapping("/popular?count={count}")
     @ResponseStatus(HttpStatus.OK)
-    public List<FilmDTO> getBestFilm(@RequestParam(defaultValue = "10") @Positive Long count) {
+    public Optional<List<FilmDTO>> getBestFilm(@RequestParam(defaultValue = "10") @Positive Long count) {
         return filmService.getBestFilm(count);
     }
 }

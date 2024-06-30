@@ -71,7 +71,7 @@ public class FilmControllerTest {
         film1.setId(1L);
         film1.setReleaseDate(LocalDate.of(2002, 11, 14));
         filmController.update(film1);
-        FilmDTO filmTest = filmController.findAll().getFirst();
+        FilmDTO filmTest = filmController.findAll().get().getFirst();
         Assertions.assertEquals(filmTest.getDuration(), 174, "Фильм не обновлен");
         System.out.println(filmController.findAll());
     }

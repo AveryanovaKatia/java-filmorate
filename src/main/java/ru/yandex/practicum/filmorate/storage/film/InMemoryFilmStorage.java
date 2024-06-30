@@ -10,10 +10,10 @@ import java.util.stream.Collectors;
 public class InMemoryFilmStorage implements FilmStorage {
 
     @Override
-    public List<FilmDTO> findAll() {
+    public Optional<List<FilmDTO>> findAll() {
         List<FilmDTO> allFilmDTO = new ArrayList<>();
         films.values().forEach(film -> allFilmDTO.add(getDTO(film)));
-        return allFilmDTO;
+        return Optional.of(allFilmDTO);
     }
 
     @Override
@@ -30,24 +30,24 @@ public class InMemoryFilmStorage implements FilmStorage {
     }
 
     @Override
-    public Set<Long> putLike(Long id, Long userId) {
-        films.get(id).getLikes().add(id);
-        return films.get(id).getLikes();
+    public FilmDTO putLike(Long id, Long userId) {
+        films.get(id).setLikes(userId);
+        return getDTO(films.get(id));
     }
 
     @Override
-    public Set<Long> deleteLike(Long id, Long userId) {
+    public FilmDTO deleteLike(Long id, Long userId) {
         films.get(id).getLikes().remove(userId);
-        return films.get(id).getLikes();
+        return getDTO(films.get(id));
     }
 
     @Override
-    public List<FilmDTO> getBestFilm(Long count) {
-        return films.values().stream()
+    public Optional<List<FilmDTO>> getBestFilm(Long count) {
+        return Optional.of(films.values().stream()
                 .sorted(Comparator.comparing((Film film) -> film.getLikes().size()).reversed())
                 .limit(count)
                 .map(this::getDTO)
-                .collect(Collectors.toList());
+                .collect(Collectors.toList()));
     }
 
     @Override
