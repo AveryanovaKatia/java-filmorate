@@ -66,7 +66,7 @@ public class UserService {
 
     public Optional<List<UserDTO>> getAllFriends(Long id) {
         validId(id);
-        if(Objects.isNull(userStorage.getUsers().get(id).getFriends())) {
+        if (Objects.isNull(userStorage.getUsers().get(id).getFriends())) {
             return Optional.empty();
         }
         Optional<List<UserDTO>> friends = userStorage.getAllFriends(id);
