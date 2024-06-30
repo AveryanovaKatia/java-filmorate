@@ -24,7 +24,7 @@ public class UserService {
 
     public Optional<List<UserDTO>> findAll() {
         log.info("Запрос на получение списка пользователей");
-        if(userStorage.getUsers().isEmpty()) {
+        if (userStorage.getUsers().isEmpty()) {
             return Optional.empty();
         }
         return userStorage.findAll();
@@ -53,7 +53,7 @@ public class UserService {
 
     public UserDTO deleteFriend(Long id, Long friendId) {
         validUserEqualsFriend(id, friendId, "Нельзя удалить пользователя из друзей у самого себя");
-        if(!userStorage.getUsers().get(id).getFriends().contains(friendId)) {
+        if (!userStorage.getUsers().get(id).getFriends().contains(friendId)) {
             log.warn("Нельзя удалить пользователя {} из друзей у пользователя с id {} если они не дружат",
                     friendId, id);
             throw new NotFoundException(
