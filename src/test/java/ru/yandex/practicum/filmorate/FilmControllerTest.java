@@ -42,7 +42,7 @@ public class FilmControllerTest {
                         .content("{\"name\":\"Harry Potter and the Philosopher's Stone\","
                                 + "\"description\":\"The boy who lived\","
                                 + "\"releaseDate\":\"2001-11-22\",\"duration\":121}"))
-                .andExpect(status().isOk());
+                .andExpect(status().isCreated());
     }
 
     @Test // нельзя создать фильм с неккоректной датой релиза

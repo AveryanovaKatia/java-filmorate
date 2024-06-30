@@ -44,7 +44,7 @@ public class UserControllerTest {
                                 + "\"login\":\"gromgrommolnia\","
                                 + "\"name\":\"Katia\","
                                 + "\"birthday\":\"1993-12-15\"}"))
-                .andExpect(status().isOk());
+                .andExpect(status().isCreated());
     }
 
     @Test // нельзя добавить пользователя с некорректным логином
