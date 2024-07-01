@@ -13,7 +13,11 @@ import ru.yandex.practicum.filmorate.controller.UserController;
 import ru.yandex.practicum.filmorate.dto.UserDTO;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.service.UserService;
+import ru.yandex.practicum.filmorate.storage.user.InMemoryUserStorage;
 import java.time.LocalDate;
+import java.util.List;
+
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @FieldDefaults(level = AccessLevel.PRIVATE)
@@ -24,19 +28,11 @@ public class UserControllerTest {
 
     @BeforeEach
     public void beforeEachTest() {
-        userController = new UserController();
-        mockMvc = MockMvcBuilders.standaloneSetup(new UserController()).build();
+        userController = new UserController(new UserService(new InMemoryUserStorage()));
+        mockMvc = MockMvcBuilders
+                .standaloneSetup(userController)
+                .build();
         user = new User();
-    }
-
-    @Test // добавление фильма с корректными полями JUnit
-    public void createUserTestAssert() {
-        user.setEmail("gromgrommolnia@yandex.ru");
-        user.setLogin("gromgrommolnia");
-        user.setName("Katia");
-        user.setBirthday(LocalDate.of(1993, 12, 15));
-        userController.create(user);
-        Assertions.assertEquals(user.getId(), 1, "Пользователь не добавлен");
     }
 
     @Test // добавление фильма с корректными полями Mock
@@ -48,7 +44,7 @@ public class UserControllerTest {
                                 + "\"login\":\"gromgrommolnia\","
                                 + "\"name\":\"Katia\","
                                 + "\"birthday\":\"1993-12-15\"}"))
-                .andExpect(status().isOk());
+                .andExpect(status().isCreated());
     }
 
     @Test // нельзя добавить пользователя с некорректным логином
@@ -88,8 +84,8 @@ public class UserControllerTest {
         user1.setId(1L);
         user1.setBirthday(LocalDate.of(1993, 12, 15));
         userController.update(user1);
-        UserDTO userTest = userController.findAll().getFirst();
-        Assertions.assertEquals(userTest.getName(), "Lena", "Имя не обновлено");
+        List<UserDTO> userTest = userController.findAll().get();
+        Assertions.assertEquals(userTest.getFirst().getName(), "Lena", "Имя не обновлено");
     }
 
     @Test // нельзя передать некорректно имейл
