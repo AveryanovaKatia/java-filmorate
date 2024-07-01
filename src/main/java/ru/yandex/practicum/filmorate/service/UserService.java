@@ -55,13 +55,6 @@ public class UserService {
 
     public UserDTO deleteFriend(Long id, Long friendId) {
         validUserEqualsFriend(id, friendId, "Нельзя удалить пользователя из друзей у самого себя");
-        if (!userStorage.getUsers().get(id).getFriends().contains(friendId)) {
-            log.warn("Нельзя удалить пользователя {} из друзей у пользователя с id {} если они не дружат",
-                    friendId, id);
-            throw new NotFoundException(
-                    "Нельзя удалить пользователя {} из друзей у пользователя с id {} если они не дружат"
-                            + friendId + id);
-        }
         log.info("Пользователь с id {} успешно удален из друзей у пользователя с id {}", friendId, id);
         return userStorage.deleteFriend(id, friendId);
     }
@@ -91,12 +84,12 @@ public class UserService {
     }
 
     private void validUserEqualsFriend(Long id, Long friendId, String message) {
+        validId(id);
+        validId(friendId);
         if (Objects.equals(id, friendId)) {
             log.warn(message);
             throw new ValidationException(message);
         }
-        validId(id);
-        validId(friendId);
     }
 
     private void validId(Long id) {

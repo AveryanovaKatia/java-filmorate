@@ -36,6 +36,7 @@ public class FilmService {
     }
 
     public FilmDTO update(Film film) {
+        log.info("Запрос на обновление фильма в сервисе");
         validId(film.getId());
         FilmDTO filmDTO = filmStorage.update(film);
         log.info("Фильм с id {} успешно обновлен", film.getId());
@@ -60,8 +61,12 @@ public class FilmService {
 
     public Optional<List<FilmDTO>> getBestFilm(Long count) {
         log.info("Запрос на получение списка лучших фильмов");
-        if (filmStorage.getFilms().size() < count) {
-            return filmStorage.getBestFilm((long) filmStorage.getFilms().size());
+        if (filmStorage.getFilms().isEmpty()) {
+            return Optional.empty();
+        }
+        Long size = (long) filmStorage.getFilms().size();
+        if (size < count) {
+            return filmStorage.getBestFilm(size);
         }
         return filmStorage.getBestFilm(count);
     }

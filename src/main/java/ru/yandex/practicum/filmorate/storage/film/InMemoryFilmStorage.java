@@ -31,7 +31,7 @@ public class InMemoryFilmStorage implements FilmStorage {
 
     @Override
     public FilmDTO putLike(Long id, Long userId) {
-        films.get(id).setLikes(userId);
+        films.get(id).getLikes().add(userId);
         return getDTO(films.get(id));
     }
 
@@ -43,9 +43,6 @@ public class InMemoryFilmStorage implements FilmStorage {
 
     @Override
     public Optional<List<FilmDTO>> getBestFilm(Long count) {
-        if (films.isEmpty()) {
-            return Optional.empty();
-        }
         return Optional.of(films.values().stream()
                 .sorted(Comparator.comparing((Film film) -> film.getLikes().size()).reversed())
                 .limit(count)

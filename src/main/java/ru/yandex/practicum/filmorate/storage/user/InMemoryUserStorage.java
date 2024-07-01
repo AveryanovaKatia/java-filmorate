@@ -33,8 +33,8 @@ public class InMemoryUserStorage implements UserStorage {
 
     @Override
     public UserDTO addNewFriend(Long id, Long friendId) {
-        users.get(id).setFriends(friendId);
-        users.get(friendId).setFriends(id);
+        users.get(id).getFriends().add(friendId);
+        users.get(friendId).getFriends().add(id);
         return getDTO(users.get(id));
     }
 

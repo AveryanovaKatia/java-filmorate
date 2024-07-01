@@ -27,9 +27,5 @@ public class User {
     @Past(message = "День рождения не может быть позднее этого мгновения")
     LocalDate birthday;
     Set<Long> friends = new TreeSet<>();
-
-    public void setFriends(Long id) {
-        friends.add(id);
-    }
 }
 

@@ -1,10 +1,5 @@
-spring:
-  main:
-    log-startup-info: false
-    banner-mode: off
-
 server:
   port: 8080
 
 logging.level:
-  org.zalando.logbook: WARN
+  org.zalando.logbook: TRACE
