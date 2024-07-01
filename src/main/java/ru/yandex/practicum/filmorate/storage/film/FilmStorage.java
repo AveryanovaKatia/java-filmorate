@@ -17,7 +17,7 @@ public interface FilmStorage {
 
     FilmDTO deleteLike(Long id, Long userId);
 
-    Optional<List<FilmDTO>> getBestFilm(Long count);
+    Optional<Collection<FilmDTO>> getBestFilm(Long count);
 
     Map<Long, Film> getFilms();
 }

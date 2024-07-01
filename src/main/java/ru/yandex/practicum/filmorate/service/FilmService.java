@@ -10,6 +10,8 @@ import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
 import ru.yandex.practicum.filmorate.storage.user.UserStorage;
+
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
@@ -59,7 +61,7 @@ public class FilmService {
         return film;
     }
 
-    public Optional<List<FilmDTO>> getBestFilm(Long count) {
+    public Optional<Collection<FilmDTO>> getBestFilm(Long count) {
         log.info("Запрос на получение списка лучших фильмов");
         if (filmStorage.getFilms().isEmpty()) {
             return Optional.empty();

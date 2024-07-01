@@ -50,7 +50,7 @@ public class FilmController {
 
     @GetMapping("/popular?count={count}")
     @ResponseStatus(HttpStatus.OK)
-    public Optional<List<FilmDTO>> getBestFilm(@RequestParam(defaultValue = "10") @Positive Long count) {
+    public Optional<Collection<FilmDTO>> getBestFilm(@RequestParam(defaultValue = "10") @Positive Long count) {
         return filmService.getBestFilm(count);
     }
 }
