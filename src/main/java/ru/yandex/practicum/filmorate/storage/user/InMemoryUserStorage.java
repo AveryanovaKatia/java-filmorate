@@ -51,15 +51,15 @@ public class InMemoryUserStorage implements UserStorage {
     }
 
    @Override
-    public Optional<Collection<UserDTO>> getMutualFriends(Long id, Long otherId) {
-        Set<Long> user = users.get(id).getFriends();
-        Set<Long> other = users.get(otherId).getFriends();
-        Set<Long> mutualFriendTds = user.stream().filter(other::contains).collect(Collectors.toSet());
-        if (mutualFriendTds.isEmpty()) {
-            return Optional.empty();
-        }
-        return Optional.of(mutualFriendTds.stream().map(users::get).map(this::getDTO).toList());
-    }
+    public Optional<List<UserDTO>> getMutualFriends(Long id, Long otherId) {
+       Set<Long> user = users.get(id).getFriends();
+       Set<Long> other = users.get(otherId).getFriends();
+       Set<Long> mutualFriendTds = user.stream().filter(other::contains).collect(Collectors.toSet());
+       if (mutualFriendTds.isEmpty()) {
+           return Optional.empty();
+       }
+       return Optional.of(mutualFriendTds.stream().map(users::get).map(this::getDTO).toList());
+   }
 
     @Override
     public Map<Long, User> getUsers() {

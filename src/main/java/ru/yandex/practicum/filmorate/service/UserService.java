@@ -69,9 +69,9 @@ public class UserService {
         return friends;
     }
 
-    public Optional<Collection<UserDTO>> getMutualFriends(Long id, Long otherId) {
+    public Optional<List<UserDTO>> getMutualFriends(Long id, Long otherId) {
         validUserEqualsFriend(id, otherId, "Нельзя проверять соответствие друзей у себя и себя");
-        Optional<Collection<UserDTO>> friends = userStorage.getMutualFriends(id, otherId);
+        Optional<List<UserDTO>> friends = userStorage.getMutualFriends(id, otherId);
         log.info("Общие друзья пользователь с id {} и пользователя с id {}", otherId, id);
         return friends;
     }
