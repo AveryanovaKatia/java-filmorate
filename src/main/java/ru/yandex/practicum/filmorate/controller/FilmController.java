@@ -48,7 +48,7 @@ public class FilmController {
         return filmService.deleteLike(id, userId);
     }
 
-    @GetMapping("/popular?count={count}")
+    @GetMapping("/popular")
     @ResponseStatus(HttpStatus.OK)
     public Optional<Collection<FilmDTO>> getBestFilm(@RequestParam(defaultValue = "10") @Positive Long count) {
         return filmService.getBestFilm(count);
