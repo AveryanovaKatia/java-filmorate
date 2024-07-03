@@ -5,9 +5,11 @@ import lombok.AccessLevel;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.FieldDefaults;
-import ru.yandex.practicum.filmorate.annotation.StartRelease;
+import ru.yandex.practicum.filmorate.validation.StartRelease;
 import ru.yandex.practicum.filmorate.group.UpdateGroup;
 import java.time.LocalDate;
+import java.util.Set;
+import java.util.TreeSet;
 
 /**
  * Film.
@@ -26,4 +28,9 @@ public class Film {
     LocalDate releaseDate;
     @Min(value = 0, message = "Продолжительность фильма не может быть отрицательным числом")
     Long duration;
+    Set<Long> likes = new TreeSet<>();
+
+    public void setLikes(Long id) {
+        likes.add(id);
+    }
 }

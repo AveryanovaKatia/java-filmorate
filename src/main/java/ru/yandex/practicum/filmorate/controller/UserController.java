@@ -1,77 +1,66 @@
 package ru.yandex.practicum.filmorate.controller;
 
 import jakarta.validation.Valid;
-import lombok.extern.slf4j.Slf4j;
+import jakarta.validation.constraints.Positive;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.dto.UserDTO;
-import ru.yandex.practicum.filmorate.exception.NotFoundException;
-import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.group.UpdateGroup;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.service.UserService;
 import java.util.*;
 
 @RestController
 @RequestMapping("/users")
-@Slf4j
 public class UserController {
-    private final Map<Long, User> users = new HashMap<>();
+    private final UserService userService;
+
+    @Autowired
+    public UserController(@Autowired UserService userService) {
+        this.userService = userService;
+    }
 
     @GetMapping
-    public List<UserDTO> findAll() {
-        log.info("Запрос на получение списка пользователей");
-        List<UserDTO> allUserDTO = new ArrayList<>();
-        users.values().forEach(film -> allUserDTO.add(getDTO(film)));
-        return allUserDTO;
+    @ResponseStatus(HttpStatus.OK)
+    public Optional<List<UserDTO>> findAll() {
+       return userService.findAll();
     }
 
     @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
     public UserDTO create(@Valid @RequestBody User user) {
-        validLogin(user.getLogin());
-        if (Objects.isNull(user.getName())) {
-            user.setName(user.getLogin());
-        }
-        user.setId(getNextId());
-        users.put(user.getId(), user);
-        log.info("Пользователь успешно добавлен под id {}", user.getId());
-        return getDTO(user);
+        return userService.create(user);
     }
 
     @PutMapping
+    @ResponseStatus(HttpStatus.OK)
     public UserDTO update(@Validated(UpdateGroup.class) @RequestBody User user) {
-        if (!users.containsKey(user.getId())) {
-            log.info("Пользователя с id = {} нет.", user.getId());
-            throw new NotFoundException("Пользователя с id = {} нет." + user.getId());
-        }
-        validLogin(user.getLogin());
-        users.put(user.getId(), user);
-        log.info("Пользователь с id {} успешно обновлен", user.getId());
-        return getDTO(user);
+        return userService.update(user);
     }
 
-    private Long getNextId() {
-        long currentMaxId = users.keySet()
-                .stream()
-                .mapToLong(id -> id)
-                .max()
-                .orElse(0);
-        return ++currentMaxId;
+    @PutMapping("/{id}/friends/{friendId}")
+    @ResponseStatus(HttpStatus.OK)
+    public UserDTO addNewFriend(@PathVariable @Positive Long id, @PathVariable @Positive Long friendId) {
+        return userService.addNewFriend(id, friendId);
     }
 
-    private void validLogin(String login) {
-        if (login.contains(" ")) {
-            log.error("Логин пользователя не должен содержать пробелы");
-            throw new ValidationException("Логин пользователя не должен содержать пробелы");
-        }
+    @DeleteMapping("/{id}/friends/{friendId}")
+    @ResponseStatus(HttpStatus.OK)
+    public UserDTO deleteFriend(@PathVariable @Positive Long id, @PathVariable @Positive Long friendId) {
+        return userService.deleteFriend(id, friendId);
     }
 
-    private UserDTO getDTO(User user) {
-        UserDTO userDTO = new UserDTO();
-        userDTO.setId(user.getId());
-        userDTO.setEmail(user.getEmail());
-        userDTO.setLogin(user.getLogin());
-        userDTO.setName(user.getName());
-        userDTO.setBirthday(user.getBirthday());
-        return userDTO;
+    @GetMapping("/{id}/friends")
+    @ResponseStatus(HttpStatus.OK)
+    public Optional<List<UserDTO>> getAllFriends(@PathVariable @Positive Long id) {
+        return userService.getAllFriends(id);
+    }
+
+    @GetMapping("/{id}/friends/common/{otherId}")
+    @ResponseStatus(HttpStatus.OK)
+    public Optional<List<UserDTO>> getMutualFriends(@PathVariable Long id, @PathVariable Long otherId) {
+        return userService.getMutualFriends(id, otherId);
     }
 }
