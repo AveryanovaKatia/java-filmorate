@@ -13,14 +13,20 @@ import ru.yandex.practicum.filmorate.service.FilmService;
 import java.util.*;
 
 @RestController
-@RequestMapping("/films")
 @AllArgsConstructor
+@RequestMapping("/films")
 public class FilmController {
-    private FilmService filmService;
+    private final FilmService filmService;
+
+    @GetMapping("/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    public Optional<FilmDTO> getById(@PathVariable @Positive Long id) {
+        return filmService.getById(id);
+    }
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    public Optional<List<FilmDTO>> findAll() {
+    public List<FilmDTO> findAll() {
         return filmService.findAll();
     }
 
@@ -38,19 +44,19 @@ public class FilmController {
 
     @PutMapping("/{id}/like/{userId}")
     @ResponseStatus(HttpStatus.OK)
-    public FilmDTO putLike(@PathVariable @Positive Long id, @PathVariable @Positive Long userId) {
-        return filmService.putLike(id, userId);
+    public void putLike(@PathVariable @Positive Long id, @PathVariable @Positive Long userId) {
+        filmService.putLike(id, userId);
     }
 
     @DeleteMapping("/{id}/like/{userId}")
     @ResponseStatus(HttpStatus.OK)
-    public FilmDTO deleteLike(@PathVariable @Positive Long id, @PathVariable @Positive Long userId) {
-        return filmService.deleteLike(id, userId);
+    public void deleteLike(@PathVariable @Positive Long id, @PathVariable @Positive Long userId) {
+        filmService.deleteLike(id, userId);
     }
 
     @GetMapping("/popular")
     @ResponseStatus(HttpStatus.OK)
-    public Optional<Collection<FilmDTO>> getBestFilm(@RequestParam(defaultValue = "10") @Positive Long count) {
+    public Collection<FilmDTO> getBestFilm(@RequestParam(defaultValue = "10") @Positive Long count) {
         return filmService.getBestFilm(count);
     }
 }
