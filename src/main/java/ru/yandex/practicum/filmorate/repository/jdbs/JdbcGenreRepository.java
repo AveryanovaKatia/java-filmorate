@@ -35,7 +35,7 @@ public class JdbcGenreRepository implements GenreRepository {
 
     @Override
     public List<Genre> getListGenres(List<Integer> ids) {
-        String sql ="SELECT * FROM genres WHERE genre_id IN (:genre_id);";
+        String sql = "SELECT * FROM genres WHERE genre_id IN (:genre_id);";
         return jdbc.query(sql, Map.of("genre_id", ids), genreRowMapper());
     }
 
