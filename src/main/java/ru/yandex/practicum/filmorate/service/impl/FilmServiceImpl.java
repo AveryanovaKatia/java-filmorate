@@ -44,6 +44,7 @@ public class FilmServiceImpl implements FilmService {
     public FilmDTO create(final Film film) {
         log.info("Запрос на добавление нового фильма");
         validAndAddMpaGenres(film);
+        log.info("Запрос на добавление нового фильма в репозиторий");
         Film newFilm = filmRepository.create(film);
         log.info("Фильм успешно добавлен под id {}", newFilm.getId());
         return getDTO(newFilm);

@@ -29,6 +29,7 @@ public class Film {
     LocalDate releaseDate;
     @Min(value = 0, message = "Продолжительность фильма не может быть отрицательным числом")
     int duration;
+    @NotNull
     Mpa mpa;
     Set<Genre> genres = new TreeSet<>(Comparator.comparingInt(Genre::getId));
     Set<Integer> likes;
