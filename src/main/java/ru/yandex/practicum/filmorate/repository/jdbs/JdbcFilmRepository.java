@@ -45,7 +45,6 @@ public class JdbcFilmRepository implements FilmRepository {
 
     @Override
     public Film create(final Film film) {
-        Set<Genre> f = film.getGenres();
         KeyHolder keyHolder = new GeneratedKeyHolder();
         String sql = "INSERT INTO FILMS (name, description, release_date, duration, mpa_id) " +
                 "VALUES (:name, :description, :release_date, :duration, :mpa_id); ";

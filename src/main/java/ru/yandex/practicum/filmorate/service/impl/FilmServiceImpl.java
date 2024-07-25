@@ -117,15 +117,18 @@ public class FilmServiceImpl implements FilmService {
                     .orElseThrow(() -> new NotFoundException("В приложении не предусмотрено такое mpa"))
             );
         }
+
         if (Objects.nonNull(film.getGenres())) {
             log.info("Проверка на корректность введенных к фильму жанров");
-            List<Genre> genres = genreRepository.getListGenres(film.getGenres()
-                    .stream().map(Genre::getId).toList());
+            Set<Genre> genres = Set.copyOf(genreRepository.getListGenres(film.getGenres()
+                    .stream().map(Genre::getId).toList()));
             if (Objects.isNull(genres)) {
                 log.error("Жанры не указаны");
                 throw new NotFoundException("Жанры не указаны");
             } else if (genres.size() == film.getGenres().size()) {
                 log.info("Перечень жанров указан корректно");
+                film.getGenres().clear();
+                film.setGenres(genres);
             } else {
                 log.error("Перечень жанров указан не корректно");
                 throw new ValidationException("Перечень жанров указан не корректно");
