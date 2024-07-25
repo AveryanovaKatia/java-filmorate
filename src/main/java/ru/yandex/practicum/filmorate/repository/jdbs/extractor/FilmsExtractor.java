@@ -11,7 +11,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
-public class FilmsExtractor implements ResultSetExtractor<Map<Integer, Film> > {
+public class FilmsExtractor implements ResultSetExtractor<Map<Integer, Film>> {
     @Override
     public Map<Integer, Film> extractData(final ResultSet rs) throws SQLException, DataAccessException {
         Map<Integer, Film> films = new HashMap<>();
