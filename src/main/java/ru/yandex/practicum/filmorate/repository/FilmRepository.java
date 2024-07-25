@@ -4,7 +4,7 @@ import ru.yandex.practicum.filmorate.model.Film;
 import java.util.*;
 
 public interface FilmRepository {
-    Optional<Film> getDyId(Long id);
+    Optional<Film> getDyId(int id);
 
     List<Film> findAll();
 
@@ -12,11 +12,11 @@ public interface FilmRepository {
 
     Film update(Film film);
 
-    void putLike(Long id, Long userId);
+    void putLike(int id, int userId);
 
-    void deleteLike(Long id, Long userId);
+    void deleteLike(int id, int userId);
 
-    Collection<Film> getBestFilm(Long count);
+    Collection<Film> getBestFilm(int count);
 
-    List<Long> getAllId();
+    List<Integer> getAllId();
 }

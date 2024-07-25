@@ -7,5 +7,5 @@ import java.util.Optional;
 public interface MpaService {
     List<Mpa> findAll();
 
-    Optional<Mpa> findById(Long id);
+    Optional<Mpa> findById(int id);
 }

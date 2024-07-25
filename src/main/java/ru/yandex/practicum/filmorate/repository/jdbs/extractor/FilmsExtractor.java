@@ -11,26 +11,26 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
-public class FilmsExtractor implements ResultSetExtractor<Map<Long, Film> > {
+public class FilmsExtractor implements ResultSetExtractor<Map<Integer, Film> > {
     @Override
-    public Map<Long, Film> extractData(ResultSet rs) throws SQLException, DataAccessException {
-        Map<Long, Film> films = new HashMap<>();
+    public Map<Integer, Film> extractData(final ResultSet rs) throws SQLException, DataAccessException {
+        Map<Integer, Film> films = new HashMap<>();
         while (rs.next()) {
-            Long filmId = rs.getLong("film_id");
+            int filmId = rs.getInt("film_id");
             if (Objects.nonNull(films.get(filmId))) {
                 films.get(filmId)
                         .getGenres()
-                        .add(new Genre(rs.getLong("genre_id"), rs.getString("genre")));
+                        .add(new Genre(rs.getInt("genre_id"), rs.getString("genre_name")));
                 continue;
             }
             Film film = new Film();
-            film.setName(rs.getString("film_name"));
+            film.setName(rs.getString("name"));
             film.setDescription(rs.getString("description"));
-            film.setReleaseDate(rs.getDate("releaseDate").toLocalDate());
-            film.setDuration(rs.getLong("duration"));
-            film.setId(rs.getLong("film_id"));
-            film.setMpa(new Mpa(rs.getLong("mpa_id"), rs.getString("mpa")));
-            film.getGenres().add(new Genre(rs.getLong("genre_id"), rs.getString("genre")));
+            film.setReleaseDate(rs.getDate("release_date").toLocalDate());
+            film.setDuration(rs.getInt("duration"));
+            film.setId(rs.getInt("film_id"));
+            film.setMpa(new Mpa(rs.getInt("mpa_id"), rs.getString("mpa_name")));
+            film.getGenres().add(new Genre(rs.getInt("genre_id"), rs.getString("genre_name")));
             films.put(filmId, film);
         }
         return films;

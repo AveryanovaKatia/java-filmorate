@@ -1,12 +1,12 @@
-INSERT INTO MPA (MPA_ID, MPA_NAME) VALUES (1, 'G');
-INSERT INTO MPA (MPA_ID, MPA_NAME) VALUES (2, 'PG');
-INSERT INTO MPA (MPA_ID, MPA_NAME) VALUES (3, 'PG-13');
-INSERT INTO MPA (MPA_ID, MPA_NAME) VALUES (4, 'R');
-INSERT INTO MPA (MPA_ID, MPA_NAME) VALUES (5, 'NC-17');
+INSERT INTO MPA (mpa_id, mpa_name) VALUES (1, 'G');
+INSERT INTO MPA (mpa_id, mpa_name) VALUES (2, 'PG');
+INSERT INTO MPA (mpa_id, mpa_name) VALUES (3, 'PG-13');
+INSERT INTO MPA (mpa_id, mpa_name) VALUES (4, 'R');
+INSERT INTO MPA (mpa_id, mpa_name) VALUES (5, 'NC-17');
 
-insert into GENRES (GENRE_ID, GENRE_NAME) VALUES (1, 'Комедия');
-insert into GENRES (GENRE_ID, GENRE_NAME) VALUES (2, 'Драма');
-insert into GENRES (GENRE_ID, GENRE_NAME) VALUES (3, 'Мультфильм');
-insert into GENRES (GENRE_ID, GENRE_NAME) VALUES (4, 'Триллер');
-insert into GENRES (GENRE_ID, GENRE_NAME) VALUES (5, 'Документальный');
-insert into GENRES (GENRE_ID, GENRE_NAME) VALUES (6, 'Боевик');
+insert into GENRES (genre_id, genre_name) VALUES (1, 'Комедия');
+insert into GENRES (genre_id, genre_name) VALUES (2, 'Драма');
+insert into GENRES (genre_id, genre_name) VALUES (3, 'Мультфильм');
+insert into GENRES (genre_id, genre_name) VALUES (4, 'Триллер');
+insert into GENRES (genre_id, genre_name) VALUES (5, 'Документальный');
+insert into GENRES (genre_id, genre_name) VALUES (6, 'Боевик');

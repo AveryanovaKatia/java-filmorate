@@ -2,18 +2,23 @@ package ru.yandex.practicum.filmorate.dto;
 
 import lombok.AccessLevel;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.experimental.FieldDefaults;
+import ru.yandex.practicum.filmorate.model.Genre;
+import ru.yandex.practicum.filmorate.model.Mpa;
 import java.time.LocalDate;
 import java.util.Set;
-import java.util.TreeSet;
 
 @Data
+@EqualsAndHashCode(exclude = {"id"})
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class FilmDTO {
-    Long id;
+    int id;
     String name;
     String description;
     LocalDate releaseDate;
-    Long duration;
-    Set<Long> likes = new TreeSet<>();
+    int duration;
+    Mpa mpa;
+    Set<Genre> genres;
+    Set<Integer> likes;
 }

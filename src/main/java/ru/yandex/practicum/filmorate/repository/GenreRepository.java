@@ -8,5 +8,7 @@ import java.util.Optional;
 public interface GenreRepository {
     List<Genre> findAll();
 
-    Optional<Genre> findById(Long id);
+    Optional<Genre> findById(int id);
+
+    List<Genre> getListGenres(List<Integer> ids);
 }

@@ -10,7 +10,7 @@ import ru.yandex.practicum.filmorate.model.User;
 import java.util.*;
 
 public interface UserRepository {
-    Optional<User> getById(Long id);
+    Optional<User> getById(int id);
 
     List<User> findAll();
 
@@ -18,13 +18,13 @@ public interface UserRepository {
 
     User update(@Validated(UpdateGroup.class) @RequestBody User user);
 
-    void addNewFriend(Long id, Long friendId);
+    void addNewFriend(int id, int friendId);
 
-    void deleteFriend(Long id, Long friendId);
+    void deleteFriend(int id, int friendId);
 
-    List<User> getAllFriends(Long id);
+    List<User> getAllFriends(int id);
 
-    List<User> getMutualFriends(Long id, Long otherId);
+    List<User> getMutualFriends(int id, int otherId);
 
-    List<Long> getAllId();
+    List<Integer> getAllId();
 }

@@ -9,15 +9,15 @@ import java.sql.SQLException;
 
 public class UserExtractor implements ResultSetExtractor<User> {
     @Override
-    public User extractData(ResultSet rs) throws SQLException, DataAccessException {
+    public User extractData(final ResultSet rs) throws SQLException, DataAccessException {
         User user = null;
         while (rs.next()) {
             user = new User();
-            user.setId(rs.getLong("user_id"));
+            user.setId(rs.getInt("user_id"));
             user.setEmail(rs.getString("email"));
             user.setLogin(rs.getString("login"));
             user.setName(rs.getString("name"));
-            user.setBirthday(rs.getDate("birthday;").toLocalDate());
+            user.setBirthday(rs.getDate("birthday").toLocalDate());
         }
         return user;
     }

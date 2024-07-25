@@ -10,21 +10,21 @@ import java.sql.SQLException;
 
 public class FilmExtractor implements ResultSetExtractor<Film> {
     @Override
-    public Film extractData(ResultSet rs) throws SQLException, DataAccessException {
+    public Film extractData(final ResultSet rs) throws SQLException, DataAccessException {
         Film film = null;
         if (rs.next()) {
             film = new Film();
-            film.setName(rs.getString("film_name"));
+            film.setName(rs.getString("name"));
             film.setDescription(rs.getString("description"));
-            film.setReleaseDate(rs.getDate("releaseDate").toLocalDate());
-            film.setDuration(rs.getLong("duration"));
-            film.setId(rs.getLong("film_id"));
-            film.setMpa(new Mpa(rs.getLong("mpa_id"), rs.getString("mpa")));
-            long idGenre = rs.getLong("genre_id");
+            film.setReleaseDate(rs.getDate("release_date").toLocalDate());
+            film.setDuration(rs.getInt("duration"));
+            film.setId(rs.getInt("film_id"));
+            film.setMpa(new Mpa(rs.getInt("mpa_id"), rs.getString("mpa_name")));
+            int idGenre = rs.getInt("genre_id");
             if (idGenre != 0) {
                 do {
                     film.getGenres()
-                            .add(new Genre(rs.getLong("genre_id"), rs.getString("genre")));
+                            .add(new Genre(rs.getInt("genre_id"), rs.getString("genre_name")));
                 } while (rs.next());
             }
         }

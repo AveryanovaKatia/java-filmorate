@@ -1,7 +1,7 @@
 package ru.yandex.practicum.filmorate.controller;
 
 import jakarta.validation.constraints.Positive;
-import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -12,10 +12,14 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@AllArgsConstructor
 @RequestMapping("/genres")
 public class GenreController {
     private final GenreService genreService;
+
+    @Autowired
+    public GenreController(final GenreService genreService) {
+        this.genreService = genreService;
+    }
 
     @GetMapping
     public List<Genre> findAll() {
@@ -23,7 +27,7 @@ public class GenreController {
     }
 
     @GetMapping("/{id}")
-    public Optional<Genre> findById(@PathVariable @Positive Long id) {
+    public Optional<Genre> findById(@PathVariable @Positive final int id) {
         return genreService.findById(id);
     }
 }

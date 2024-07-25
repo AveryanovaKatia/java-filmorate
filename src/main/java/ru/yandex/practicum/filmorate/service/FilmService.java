@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface FilmService {
-    Optional<FilmDTO> getById(Long id);
+    Optional<FilmDTO> getById(int id);
 
     List<FilmDTO> findAll();
 
@@ -15,9 +15,9 @@ public interface FilmService {
 
     FilmDTO update(Film film);
 
-    void putLike(Long id, Long userId);
+    void putLike(int id, int userId);
 
-    void deleteLike(Long id, Long userId);
+    void deleteLike(int id, int userId);
 
-    Collection<FilmDTO> getBestFilm(Long count);
+    Collection<FilmDTO> getBestFilm(int count);
 }

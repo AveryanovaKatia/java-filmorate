@@ -16,7 +16,7 @@ import java.time.LocalDate;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class User {
     @NotNull(groups = {UpdateGroup.class})
-    Long id;
+    int id;
     @Email(message = "Емейл должен содержать @ и наименование")
     String email;
     @NotBlank(message = "Поле не может быть пустым")

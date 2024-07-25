@@ -1,7 +1,7 @@
 package ru.yandex.practicum.filmorate.controller;
 
 import jakarta.validation.constraints.Positive;
-import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -13,10 +13,14 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@AllArgsConstructor
 @RequestMapping("/mpa")
 public class MpaController {
     private final MpaService mpaService;
+
+    @Autowired
+    public MpaController(final MpaService mpaService) {
+        this.mpaService = mpaService;
+    }
 
     @GetMapping
     public List<Mpa> findAll() {
@@ -24,7 +28,7 @@ public class MpaController {
     }
 
     @GetMapping("/{id}")
-    public Optional<Mpa> findById(@PathVariable @Positive Long id) {
+    public Optional<Mpa> findById(@PathVariable @Positive final int id) {
         return mpaService.findById(id);
     }
 }

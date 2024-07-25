@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface UserService {
-    Optional<UserDTO> getById(Long id);
+    Optional<UserDTO> getById(int id);
 
     List<UserDTO> findAll();
 
@@ -15,11 +15,11 @@ public interface UserService {
 
     UserDTO update(User user);
 
-    void addNewFriend(Long id, Long friendId);
+    void addNewFriend(int id, int friendId);
 
-    void deleteFriend(Long id, Long friendId);
+    void deleteFriend(int id, int friendId);
 
-    List<UserDTO> getAllFriends(Long id);
+    List<UserDTO> getAllFriends(int id);
 
-    List<UserDTO> getMutualFriends(Long id, Long otherId);
+    List<UserDTO> getMutualFriends(int id, int otherId);
 }
