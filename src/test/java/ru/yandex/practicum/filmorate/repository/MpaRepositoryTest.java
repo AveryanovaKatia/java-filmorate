@@ -26,8 +26,7 @@ public class MpaRepositoryTest {
         Optional<Collection<Mpa>> ratingMPAOptional = Optional.ofNullable(mpaRepository.findAll());
         assertThat(ratingMPAOptional)
                 .isPresent()
-                .hasValueSatisfying(mpa ->
-                {
+                .hasValueSatisfying(mpa -> {
                     assertThat(mpa).isNotEmpty();
                     assertThat(mpa).hasSize(5);
                     assertThat(mpa).element(0).hasFieldOrPropertyWithValue("id", 1);
@@ -50,8 +49,7 @@ public class MpaRepositoryTest {
         Optional<Mpa> ratingMPAOptional = mpaRepository.findById(1);
         assertThat(ratingMPAOptional)
                 .isPresent()
-                .hasValueSatisfying(mpa ->
-                        {
+                .hasValueSatisfying(mpa -> {
                             assertThat(mpa).hasFieldOrPropertyWithValue("id", 1);
                             assertThat(mpa).hasFieldOrPropertyWithValue("name", "G");
                         }

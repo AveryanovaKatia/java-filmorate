@@ -30,8 +30,7 @@ public class UserRepositoryTest {
         Optional<User> userOptional = Optional.ofNullable(userRepository.getById(1).get());
         assertThat(userOptional)
                 .isPresent()
-                .hasValueSatisfying(user ->
-                        {
+                .hasValueSatisfying(user -> {
                             assertThat(user).hasFieldOrPropertyWithValue("id", 1);
                             assertThat(user).hasFieldOrPropertyWithValue("login", "уизли");
                             assertThat(user).hasFieldOrPropertyWithValue("name", "рон");
@@ -48,8 +47,7 @@ public class UserRepositoryTest {
         Optional<Collection<User>> userList = Optional.ofNullable(userRepository.findAll());
         assertThat(userList)
                 .isPresent()
-                .hasValueSatisfying(user ->
-                {
+                .hasValueSatisfying(user -> {
                     assertThat(user).isNotEmpty();
                     assertThat(user).hasSize(4);
                     assertThat(user).element(0).hasFieldOrPropertyWithValue("id", 1);

@@ -30,8 +30,7 @@ public class FilmRepositoryTest {
         Optional<Film> filmOptional = filmRepository.getDyId(1);
         assertThat(filmOptional)
                 .isPresent()
-                .hasValueSatisfying(film ->
-                        {
+                .hasValueSatisfying(film -> {
                             assertThat(film).hasFieldOrPropertyWithValue("id", 1L);
                             assertThat(film).hasFieldOrPropertyWithValue("name", "филосовский камень");
                             assertThat(film).hasFieldOrPropertyWithValue("description", "description1");
@@ -54,8 +53,7 @@ public class FilmRepositoryTest {
         Optional<Collection<Film>> filmListOptional = Optional.ofNullable(filmRepository.findAll());
         assertThat(filmListOptional)
                 .isPresent()
-                .hasValueSatisfying(films ->
-                {
+                .hasValueSatisfying(films -> {
                     assertThat(films).isNotEmpty();
                     assertThat(films).hasSize(5);
                     assertThat(films).element(0).hasFieldOrPropertyWithValue("id", 1L);
