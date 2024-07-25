@@ -94,7 +94,7 @@ public class FilmServiceImpl implements FilmService {
     private void validIdUser(final int id) {
         if (!userRepository.getAllId().contains(id)) {
             log.error("Пользователя с id = {} нет.", id);
-            throw new NotFoundException("Фильма с id = {} нет." + id);
+            throw new NotFoundException("Пользователя с id = {} нет." + id);
         }
     }
 
@@ -123,10 +123,7 @@ public class FilmServiceImpl implements FilmService {
             log.info("Проверка на корректность введенных к фильму жанров");
             Set<Genre> genres = Set.copyOf(genreRepository.getListGenres(film.getGenres()
                     .stream().map(Genre::getId).toList()));
-            if (Objects.isNull(genres)) {
-                log.error("Жанры не указаны");
-                throw new NotFoundException("Жанры не указаны");
-            } else if (genres.size() == film.getGenres().size()) {
+                if (genres.size() == film.getGenres().size()) {
                 log.info("Перечень жанров указан корректно");
                 film.getGenres().clear();
                 film.setGenres(genres);

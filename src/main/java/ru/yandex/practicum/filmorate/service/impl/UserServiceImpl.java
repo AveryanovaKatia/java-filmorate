@@ -15,7 +15,6 @@ import ru.yandex.practicum.filmorate.repository.UserRepository;
 import ru.yandex.practicum.filmorate.service.UserService;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 
 @Slf4j
 @Service
@@ -28,10 +27,12 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Optional<UserDTO> getById(final int id) {
+    public UserDTO getById(final int id) {
         log.info("Запрос на получение пользователя под id {}", id);
         validId(id);
-        return Optional.of(getDTO(userRepository.getById(id).get()));
+        return userRepository.getById(id)
+                .map(this::getDTO)
+                .orElseThrow(() -> new NotFoundException("Пользователя с id = " + id + " не существует"));
     }
 
     public List<UserDTO> findAll() {

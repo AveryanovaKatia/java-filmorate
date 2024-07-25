@@ -24,7 +24,7 @@ public class UserController {
 
     @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public Optional<UserDTO> getById(@PathVariable @Positive final int id) {
+    public UserDTO getById(@PathVariable @Positive final int id) {
         return userService.getById(id);
     }
 

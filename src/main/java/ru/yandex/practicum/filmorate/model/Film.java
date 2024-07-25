@@ -31,6 +31,7 @@ public class Film {
     int duration;
     @NotNull
     Mpa mpa;
+    @NotNull
     Set<Genre> genres = new TreeSet<>(Comparator.comparingInt(Genre::getId));
     Set<Integer> likes;
 }
