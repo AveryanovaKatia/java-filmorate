@@ -5,7 +5,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import ru.yandex.practicum.filmorate.dto.FilmDTO;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.*;
@@ -19,44 +18,44 @@ import java.util.*;
 @Service
 @Slf4j
 @RequiredArgsConstructor
-@FieldDefaults(makeFinal = true, level = AccessLevel.PRIVATE)
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class FilmServiceImpl implements FilmService {
-    private final FilmRepository filmRepository;
-    private final UserRepository userRepository;
-    private final GenreRepository genreRepository;
-    private final MpaRepository mpaRepository;
+    FilmRepository filmRepository;
+    UserRepository userRepository;
+    GenreRepository genreRepository;
+    MpaRepository mpaRepository;
 
-    public Optional<FilmDTO> getById(final int id) {
+    public Optional<Film> getById(final int id) {
         log.info("Запрос на получение фильма с id = {}", id);
         validId(id);
-        return Optional.of(getDTO(filmRepository.getDyId(id).get()));
+        return filmRepository.getDyId(id);
     }
 
-    public List<FilmDTO> findAll() {
+    public List<Film> findAll() {
         log.info("Запрос на получение списка фильмов");
         if (filmRepository.getAllId().isEmpty()) {
             log.info("В приложение еще не добавлен ни один фильм");
             return new ArrayList<>();
         }
-        return filmRepository.findAll().stream().map(this::getDTO).toList();
+        return filmRepository.findAll();
     }
 
-    public FilmDTO create(final Film film) {
+    public Film create(final Film film) {
         log.info("Запрос на добавление нового фильма");
         validAndAddMpaGenres(film);
         log.info("Запрос на добавление нового фильма в репозиторий");
         Film newFilm = filmRepository.create(film);
         log.info("Фильм успешно добавлен под id {}", newFilm.getId());
-        return getDTO(newFilm);
+        return newFilm;
     }
 
-    public FilmDTO update(final Film film) {
+    public Film update(final Film film) {
         log.info("Запрос на обновление фильма");
         validId(film.getId());
         validAndAddMpaGenres(film);
         Film newFilm = filmRepository.update(film);
         log.info("Фильм с id {} успешно обновлен", film.getId());
-        return getDTO(newFilm);
+        return newFilm;
     }
 
     public void putLike(final int id, final int userId) {
@@ -73,15 +72,15 @@ public class FilmServiceImpl implements FilmService {
         log.info("Пользователь с id {} удалил like у фильма с id {}", userId, id);
     }
 
-    public Collection<FilmDTO> getBestFilm(final int count) {
+    public Collection<Film> getBestFilm(final int count) {
         log.info("Запрос на получение списка лучших фильмов");
         int size = filmRepository.getAllId().size();
         if (size < count) {
             log.info("В запросе на получение списка лучших фильмов count превышвет размер списка");
-            return filmRepository.getBestFilm(size).stream().map(this::getDTO).toList();
+            return filmRepository.getBestFilm(size);
         }
         log.info("Отбираем лучшие фильмы");
-        return filmRepository.getBestFilm(count).stream().map(this::getDTO).toList();
+        return filmRepository.getBestFilm(count);
     }
 
     private void validId(final int id) {
@@ -98,19 +97,6 @@ public class FilmServiceImpl implements FilmService {
         }
     }
 
-    private FilmDTO getDTO(final Film film) {
-        FilmDTO filmDTO = new FilmDTO();
-        filmDTO.setId(film.getId());
-        filmDTO.setName(film.getName());
-        filmDTO.setDescription(film.getDescription());
-        filmDTO.setReleaseDate(film.getReleaseDate());
-        filmDTO.setDuration(film.getDuration());
-        filmDTO.setMpa(film.getMpa());
-        filmDTO.setGenres(film.getGenres());
-        filmDTO.setLikes(film.getLikes());
-        return filmDTO;
-    }
-
     private void validAndAddMpaGenres(final Film film) {
         if (Objects.nonNull(film.getMpa())) {
             log.info("Проверка на корректность введенного к фильму mpa");
@@ -121,15 +107,19 @@ public class FilmServiceImpl implements FilmService {
 
         if (Objects.nonNull(film.getGenres())) {
             log.info("Проверка на корректность введенных к фильму жанров");
-            Set<Genre> genres = Set.copyOf(genreRepository.getListGenres(film.getGenres()
-                    .stream().map(Genre::getId).toList()));
-                if (genres.size() == film.getGenres().size()) {
-                log.info("Перечень жанров указан корректно");
+            Set<Integer> genresId = Set.copyOf(film.getGenres().stream().map(Genre::getId).toList());
+            Set<Genre> genres = new HashSet<>();
+            for(Integer i : genresId) {
+                if (genreRepository.findById(i).isEmpty()) {
+                    log.warn("Передан несуществующий жанр");
+                    throw new ValidationException("Передан несуществующий жанр");
+                }
+                genres.add(genreRepository.findById(i).get());
+            }
+            if (genres.size() == film.getGenres().size()) {
+                log.info("Жанры переданы верно");
                 film.getGenres().clear();
-                film.setGenres(genres);
-            } else {
-                log.error("Перечень жанров указан не корректно");
-                throw new ValidationException("Перечень жанров указан не корректно");
+                    film.setGenres(genres);
             }
         }
     }

@@ -1,10 +1,11 @@
 package ru.yandex.practicum.filmorate.controller;
 
 import jakarta.validation.constraints.Positive;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import ru.yandex.practicum.filmorate.model.Mpa;
 import ru.yandex.practicum.filmorate.service.MpaService;
@@ -13,21 +14,17 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/mpa")
+@RequiredArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class MpaController {
-    private final MpaService mpaService;
+    MpaService mpaService;
 
-    @Autowired
-    public MpaController(final MpaService mpaService) {
-        this.mpaService = mpaService;
-    }
-
-    @GetMapping
+    @GetMapping("/mpa")
     public List<Mpa> findAll() {
         return mpaService.findAll();
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/mpa/{id}")
     public Optional<Mpa> findById(@PathVariable @Positive final int id) {
         return mpaService.findById(id);
     }

@@ -1,12 +1,13 @@
 package ru.yandex.practicum.filmorate.service.impl;
 
 import jakarta.validation.Valid;
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.RequestBody;
-import ru.yandex.practicum.filmorate.dto.UserDTO;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.group.UpdateGroup;
@@ -18,41 +19,37 @@ import java.util.Objects;
 
 @Slf4j
 @Service
+@RequiredArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class UserServiceImpl implements UserService {
-    private final UserRepository userRepository;
-
-    @Autowired
-    public UserServiceImpl(final UserRepository userRepository) {
-        this.userRepository = userRepository;
-    }
+    UserRepository userRepository;
 
     @Override
-    public UserDTO getById(final int id) {
+    public User getById(final int id) {
         log.info("Запрос на получение пользователя под id {}", id);
         validId(id);
         return userRepository.getById(id)
-                .map(this::getDTO)
                 .orElseThrow(() -> new NotFoundException("Пользователя с id = " + id + " не существует"));
     }
 
-    public List<UserDTO> findAll() {
+    public List<User> findAll() {
         log.info("Запрос на получение списка пользователей");
-        return userRepository.findAll().stream().map(this::getDTO).toList();
+        return userRepository.findAll();
     }
 
-    public UserDTO create(@Valid @RequestBody final User user) {
+    public User create(@Valid @RequestBody final User user) {
         validLogin(user.getLogin());
         User newUser = userRepository.create(user);
         log.info("Пользователь успешно добавлен под id {}", user.getId());
-        return getDTO(newUser);
+        return newUser;
     }
 
-    public UserDTO update(@Validated(UpdateGroup.class) @RequestBody final User user) {
+    public User update(@Validated(UpdateGroup.class) @RequestBody final User user) {
         validId(user.getId());
         validLogin(user.getLogin());
         User newUser = userRepository.update(user);
         log.info("Пользователь с id {} успешно обновлен", user.getId());
-        return getDTO(newUser);
+        return newUser;
     }
 
     public void addNewFriend(final int id, final int friendId) {
@@ -67,16 +64,16 @@ public class UserServiceImpl implements UserService {
         log.info("Пользователь с id {} успешно удален из друзей у пользователя с id {}", friendId, id);
     }
 
-    public List<UserDTO> getAllFriends(final int id) {
+    public List<User> getAllFriends(final int id) {
         validId(id);
         log.info("Запрос на получение всех друзей пользователя с id {}", id);
-        return userRepository.getAllFriends(id).stream().map(this::getDTO).toList();
+        return userRepository.getAllFriends(id);
     }
 
-    public List<UserDTO> getMutualFriends(final int id, final int otherId) {
+    public List<User> getMutualFriends(final int id, final int otherId) {
         validUserEqualsFriend(id, otherId, "Нельзя проверять соответствие друзей у себя и себя");
         log.info("Общие друзья пользователь с id {} и пользователя с id {}", otherId, id);
-        return userRepository.getMutualFriends(id, otherId).stream().map(this::getDTO).toList();
+        return userRepository.getMutualFriends(id, otherId);
     }
 
     private void validLogin(String login) {
@@ -100,15 +97,5 @@ public class UserServiceImpl implements UserService {
             log.warn("Пользователя с id = {} нет.", id);
             throw new NotFoundException("Пользователя с id = {} нет." + id);
         }
-    }
-
-    private UserDTO getDTO(final User user) {
-        UserDTO userDTO = new UserDTO();
-        userDTO.setId(user.getId());
-        userDTO.setEmail(user.getEmail());
-        userDTO.setLogin(user.getLogin());
-        userDTO.setName(user.getName());
-        userDTO.setBirthday(user.getBirthday());
-        return userDTO;
     }
 }

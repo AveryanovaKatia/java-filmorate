@@ -1,6 +1,8 @@
 package ru.yandex.practicum.filmorate.repository.jdbs;
 
+import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations;
@@ -15,9 +17,10 @@ import java.util.*;
 
 @Repository
 @RequiredArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class JdbcFilmRepository implements FilmRepository {
-    private final NamedParameterJdbcOperations jdbc;
-    private final JdbcTemplate jdbcTemplate;
+    NamedParameterJdbcOperations jdbc;
+    JdbcTemplate jdbcTemplate;
 
     @Override
     public Optional<Film> getDyId(final int id) {
