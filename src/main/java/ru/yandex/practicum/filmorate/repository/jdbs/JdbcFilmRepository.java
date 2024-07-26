@@ -100,18 +100,27 @@ public class JdbcFilmRepository implements FilmRepository {
 
     @Override
     public Collection<Film> getBestFilm(final int count) {
-        String sql = "SELECT films.film_id, films.name, description, release_date, duration, " +
-                "films.mpa_id, mpa.mpa_name, " +
-                "genres.genre_id, genres.genre_name, " +
-                "COUNT(likes.film_id) AS like_count " +
-                "FROM films " +
-                "JOIN film_genres ON films.film_id = film_genres.film_id " +
-                "LEFT JOIN genres ON film_genres.genre_id = genres.genre_id " +
-                "LEFT JOIN mpa ON films.mpa_id = mpa.mpa_id " +
-                "LEFT JOIN likes ON films.film_id = likes.film_id " +
-                "GROUP BY films.film_id, film_genres.genre_id " +
-                "ORDER BY like_count DESC " +
-                "LIMIT :count;";
+//        String sql = "SELECT f.film_id, f.name, f.description, f.release_date, f.duration, " +
+//                "f.mpa_id, m.mpa_name, " +
+//                "fg.genre_id, g.genre_name, " +
+//                "COUNT(l.film_id) AS like_count " +
+//                "FROM films AS f " +
+//                "LEFT JOIN film_genres AS fg ON f.film_id = fg.film_id " +
+//                "LEFT JOIN genres AS g ON fg.genre_id = g.genre_id " +
+//                "LEFT JOIN mpa AS m ON f.mpa_id = m.mpa_id " +
+//                "LEFT JOIN likes AS l ON f.film_id = l.film_id " +
+//                "GROUP BY f.film_id, fg.genre_id " +
+//                "ORDER BY like_count DESC " +
+//                "LIMIT :count;";
+
+        String sql = "SELECT DISTINCT fg.*  " +
+                "FROM film_genres AS fg " +
+                "RIGHT JOIN (SELECT l.film_id " +
+                "FROM likes AS l " +
+                "GROUP BY l.film_id " +
+                "ORDER BY count(l.film_id) DESC, l.film_id ASC" +
+                "LIMIT :count ) AS ll ON ll.film_id = fg.film_id ";
+
         Map<Integer, Film> films = jdbc.query(sql, Map.of("count", count), new FilmsExtractor());
         assert films != null;
         return films.values().stream().toList();

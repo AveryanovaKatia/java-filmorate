@@ -8,9 +8,7 @@ import lombok.experimental.FieldDefaults;
 import ru.yandex.practicum.filmorate.validation.StartRelease;
 import ru.yandex.practicum.filmorate.group.UpdateGroup;
 import java.time.LocalDate;
-import java.util.Comparator;
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.*;
 
 /**
  * Film.
@@ -31,7 +29,6 @@ public class Film {
     int duration;
     @NotNull
     Mpa mpa;
-    @NotNull
-    Set<Genre> genres = new TreeSet<>(Comparator.comparingInt(Genre::getId));
+    Set<Genre> genres = new TreeSet<>(Comparator.comparing(Genre::getId));
     Set<Integer> likes;
 }
