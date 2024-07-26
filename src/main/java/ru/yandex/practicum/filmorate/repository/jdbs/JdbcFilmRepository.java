@@ -99,7 +99,7 @@ public class JdbcFilmRepository implements FilmRepository {
     }
 
     @Override
-    public Collection<Film> getBestFilm(final int count) {
+    public List<Film> getBestFilm(final int count) {
         String sql = "SELECT f.film_id, f.name, f.description, f.release_date, f.duration, " +
                 "f.mpa_id, m.mpa_name, " +
                 "fg.genre_id, g.genre_name, " +

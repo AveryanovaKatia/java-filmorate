@@ -72,7 +72,7 @@ public class FilmServiceImpl implements FilmService {
         log.info("Пользователь с id {} удалил like у фильма с id {}", userId, id);
     }
 
-    public Collection<Film> getBestFilm(final int count) {
+    public List<Film> getBestFilm(final int count) {
         log.info("Запрос на получение списка лучших фильмов");
         int size = filmRepository.findAll().size();
         if (size < count) {

@@ -52,7 +52,7 @@ public class FilmController {
     }
 
     @GetMapping("/films/popular")
-    public Collection<Film> getBestFilm(@RequestParam(defaultValue = "10") @Positive final int count) {
+    public List<Film> getBestFilm(@RequestParam(defaultValue = "10") @Positive final int count) {
         return filmService.getBestFilm(count);
     }
 }
