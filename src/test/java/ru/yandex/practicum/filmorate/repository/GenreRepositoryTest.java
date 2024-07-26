@@ -64,4 +64,25 @@ public class GenreRepositoryTest {
                     assertThat(genres).hasFieldOrPropertyWithValue("name", "Комедия");
                 });
     }
+
+    @Test
+    @Order(3)
+    @DisplayName("GenreRepository_getListGenres")
+    void getListGenresTest() {
+        List<Integer> listGenres = List.of(1, 2, 3);
+        Optional<Collection<Genre>> genresOptional = Optional.ofNullable(genreRepository.getListGenres(listGenres));
+        assertThat(genresOptional)
+                .isPresent()
+                .hasValueSatisfying(genres ->
+                {
+                    assertThat(genres).isNotEmpty();
+                    assertThat(genres).hasSize(3);
+                    assertThat(genres).element(0).hasFieldOrPropertyWithValue("id", 1);
+                    assertThat(genres).element(0).hasFieldOrPropertyWithValue("name", "Комедия");
+                    assertThat(genres).element(1).hasFieldOrPropertyWithValue("id", 2);
+                    assertThat(genres).element(1).hasFieldOrPropertyWithValue("name", "Драма");
+                    assertThat(genres).element(2).hasFieldOrPropertyWithValue("id", 3);
+                    assertThat(genres).element(2).hasFieldOrPropertyWithValue("name", "Мультфильм");
+                });
+    }
 }
