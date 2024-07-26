@@ -88,8 +88,8 @@ public class JdbcFilmRepository implements FilmRepository {
 
     @Override
     public void putLike(final int id, final int userId) {
-        String sql = "INSERT INTO likes(film_id, user_id) VALUES ( :film_id, :user_id ); ";
-        jdbc.update(sql, Map.of("film_id", id, "user_id", userId));
+        String sql = "INSERT INTO likes(film_id, user_id) VALUES (?, ?); ";
+        jdbcTemplate.update(sql, Map.of("film_id", id, "user_id", userId));
     }
 
     @Override
