@@ -7,14 +7,14 @@ import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.model.Mpa;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Objects;
 
 public class FilmsExtractor implements ResultSetExtractor<Map<Integer, Film>> {
     @Override
     public Map<Integer, Film> extractData(final ResultSet rs) throws SQLException, DataAccessException {
-        Map<Integer, Film> films = new HashMap<>();
+        Map<Integer, Film> films = new LinkedHashMap<>();
         while (rs.next()) {
             int filmId = rs.getInt("film_id");
             if (Objects.nonNull(films.get(filmId))) {
