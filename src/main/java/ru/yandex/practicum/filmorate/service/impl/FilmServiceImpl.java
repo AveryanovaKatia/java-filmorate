@@ -74,7 +74,7 @@ public class FilmServiceImpl implements FilmService {
 
     public Collection<Film> getBestFilm(final int count) {
         log.info("Запрос на получение списка лучших фильмов");
-        int size = filmRepository.getAllId().size();
+        int size = filmRepository.findAll().size();
         if (size < count) {
             log.info("В запросе на получение списка лучших фильмов count превышвет размер списка");
             return filmRepository.getBestFilm(size);
