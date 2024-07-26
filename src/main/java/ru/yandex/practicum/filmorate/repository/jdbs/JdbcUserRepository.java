@@ -3,7 +3,7 @@ package ru.yandex.practicum.filmorate.repository.jdbs;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.context.annotation.Primary;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
@@ -17,18 +17,18 @@ import ru.yandex.practicum.filmorate.repository.jdbs.extractor.UsersExtractor;
 import java.util.*;
 
 @Repository
+@Primary
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class JdbcUserRepository implements UserRepository {
     NamedParameterJdbcOperations jdbc;
-    JdbcTemplate jdbcTemplate;
 
     @Override
     public Optional<User> getById(final int id) {
         String sql = "SELECT * " +
-                "FROM users u " +
-                "JOIN friends f ON u.user_id = f.user_id " +
-                "WHERE u.user_id = :id;";
+                "FROM users AS u " +
+                "LEFT JOIN friends f ON u.user_id = f.user_id " +
+                "WHERE u.user_id = :user_id;";
         User user = jdbc.query(sql, Map.of("user_id", id), new UserExtractor());
         return Optional.ofNullable(user);
     }
@@ -36,18 +36,22 @@ public class JdbcUserRepository implements UserRepository {
     @Override
     public List<User> findAll() {
         String sql = "SELECT * " +
-                "FROM users u " +
-                "JOIN friends f ON u.user_id = f.user_id; ";
+                "FROM users u; ";
+                //"LEFT JOIN friends f ON u.user_id = f.user_id"; ";
         return jdbc.query(sql, new UsersExtractor());
     }
 
     @Override
     public User create(final User user) {
         KeyHolder keyHolder = new GeneratedKeyHolder();
-        String sql = "INSERT INTO users (login, name, email, birthday) " +
-                "VALUES (:login, :name, :email, :birthday); ";
-        Map<String, Object> param = addParams(user);
-        jdbc.update(sql, new MapSqlParameterSource().addValues(param), keyHolder, new String[]{"user_id"});
+        String sql = "INSERT INTO users (email, login, name, birthday) " +
+                "VALUES (:email, :login, :name, :birthday); ";
+        Map<String, Object> params = new HashMap<>();
+        params.put("email", user.getEmail());
+        params.put("login", user.getLogin());
+        params.put("name", user.getName());
+        params.put("birthday", user.getBirthday());
+        jdbc.update(sql, new MapSqlParameterSource().addValues(params), keyHolder, new String[]{"user_id"});
         user.setId(Objects.requireNonNull(keyHolder.getKey()).intValue());
         return user;
     }
@@ -59,7 +63,13 @@ public class JdbcUserRepository implements UserRepository {
                 "email = :email, " +
                 "birthday = :birthday " +
                 "WHERE user_id = :user_id; ";
-        jdbc.update(sql, addParams(user));
+        Map<String, Object> params = new HashMap<>();
+        params.put("user_id", user.getId());
+        params.put("email", user.getEmail());
+        params.put("login", user.getLogin());
+        params.put("name", user.getName());
+        params.put("birthday", user.getBirthday());
+        jdbc.update(sql, params);
         return user;
     }
 
@@ -89,35 +99,16 @@ public class JdbcUserRepository implements UserRepository {
 
     @Override
     public List<User> getMutualFriends(final int id, final int otherId) {
-        String sql = "SELECT * " +
+        String sql =  "SELECT * " +
                 "FROM users " +
-                "WHERE user_id IN (SELECT friend_user_id " +
-                "FROM friends " +
-                "WHERE user_id = :user_id AND friend_user_id = (SELECT friend_user_id " +
-                "FROM friends " +
-                "WHERE user_id = :other_id)); ";
+                "WHERE user_id IN (SELECT f.friend_user_id " +
+                "FROM users AS u " +
+                "LEFT JOIN friends AS f ON u.user_id = f.user_id " +
+                "WHERE u.user_id = :user_id AND f.friend_user_id IN (SELECT fr.friend_user_id " +
+                "FROM users AS us " +
+                "LEFT JOIN friends fr ON us.user_id = fr.user_id " +
+                "WHERE us.user_id = :other_id));";
+
         return jdbc.query(sql, Map.of("user_id", id, "other_id", otherId), new UsersExtractor());
-    }
-
-    @Override
-    public List<Integer> getAllId() {
-        return jdbcTemplate.queryForObject("SELECT user_id FROM users; ", (rs, rowNum) -> {
-            List<Integer> ids = new ArrayList<>();
-            if (rs.next()) {
-                do {
-                    ids.add(rs.getInt("user_id"));
-                } while (rs.next());
-            }
-            return ids;
-        });
-    }
-
-    private Map<String, Object> addParams(final User user) {
-        Map<String, Object> params = new HashMap<>();
-        params.put("login", user.getLogin());
-        params.put("name", user.getName());
-        params.put("email", user.getEmail());
-        params.put("birthday", user.getBirthday());
-        return params;
     }
 }

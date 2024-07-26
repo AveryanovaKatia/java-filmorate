@@ -1,14 +1,14 @@
-INSERT into mpa(rating_id, name) values ( 1, 'G' );
-INSERT into mpa(rating_id, name) values ( 2, 'PG' );
-INSERT into mpa(rating_id, name) values ( 3, 'PG-13' );
-INSERT into mpa(rating_id, name) values ( 4, 'R' );
-INSERT into mpa(rating_id, name) values ( 5, 'NC-17' );
-INSERT into genres(genre_id, name) values ( 1, 'Комедия' );
-INSERT into genres(genre_id, name) values ( 2, 'Драма' );
-INSERT into genres(genre_id, name) values ( 3, 'Мультфильм' );
-INSERT into genres(genre_id, name) values ( 4, 'Триллер' );
-INSERT into genres(genre_id, name) values ( 5, 'Документальный' );
-INSERT into genres(genre_id, name) values ( 6, 'Боевик' );
+INSERT INTO mpa(mpa_id, mpa_name) values ( 1, 'G' );
+INSERT INTO mpa(mpa_id, mpa_name) values ( 2, 'PG' );
+INSERT INTO mpa(mpa_id, mpa_name) values ( 3, 'PG-13' );
+INSERT INTO mpa(mpa_id, mpa_name) values ( 4, 'R' );
+INSERT INTO mpa(mpa_id, mpa_name) values ( 5, 'NC-17' );
+INSERT INTO genres(genre_id, genre_name) values ( 1, 'Комедия' );
+INSERT INTO genres(genre_id, genre_name) values ( 2, 'Драма' );
+INSERT INTO genres(genre_id, genre_name) values ( 3, 'Мультфильм' );
+INSERT INTO genres(genre_id, genre_name) values ( 4, 'Триллер' );
+INSERT INTO genres(genre_id, genre_name) values ( 5, 'Документальный' );
+INSERT INTO genres(genre_id, genre_name) values ( 6, 'Боевик' );
 INSERT INTO users(name, login, email, birthday)
 VALUES('рон', 'уизли', 'гриффиндор@mail.ru', '1993-03-12'),
       ('невелл', 'долгопуппс', 'когтевран@mail.ru', '1994-02-02'),
@@ -28,5 +28,5 @@ INSERT INTO films(name, description, release_date, duration, mpa_id)
 VALUES ('принц полукровка', 'description6', '2006-11-24', '167', 5);
 INSERT INTO films(name, description, release_date, duration, mpa_id)
 VALUES ('дары смерти', 'description7', '2010-11-07', '198', 5);
-INSERT INTO film_genres(film_id, genre_id) VALUES (1, 1), (2, 2), (3, 3), (4, 4), (5, 5), (6, 5);
-INSERT INTO friends(user_id, friend_user_id) VALUES (1, 2), (1, 3), (2, 1), (2, 4), (3, 1), (3, 4);
+INSERT INTO film_genres(film_id, genre_id) VALUES (1, 1), (2, 2), (3, 3), (4, 4), (5, 5), (6, 5), (7, 2);
+INSERT INTO friends(user_id, friend_user_id) VALUES (1, 2), (1, 3), (2, 1), (2, 4), (3, 1), (3, 4), (4, 1);

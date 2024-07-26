@@ -93,7 +93,7 @@ public class UserServiceImpl implements UserService {
     }
 
     private void validId(final int id) {
-        if (!userRepository.getAllId().contains(id)) {
+        if (userRepository.getById(id).isEmpty()) {
             log.warn("Пользователя с id = {} нет.", id);
             throw new NotFoundException("Пользователя с id = {} нет." + id);
         }

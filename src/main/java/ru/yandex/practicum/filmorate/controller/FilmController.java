@@ -37,7 +37,7 @@ public class FilmController {
     }
 
     @PutMapping("/films")
-    public Film update(@Validated(UpdateGroup.class) @RequestBody final Film film) {
+    public Film update(@Validated(UpdateGroup.class) @Valid @RequestBody final Film film) {
         return filmService.update(film);
     }
 

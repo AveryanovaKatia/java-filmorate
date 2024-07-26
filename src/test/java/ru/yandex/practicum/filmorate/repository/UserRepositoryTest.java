@@ -7,15 +7,16 @@ import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.ImportResource;
 import ru.yandex.practicum.filmorate.model.User;
 import java.time.LocalDate;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
-
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
+@ImportResource
 @AutoConfigureTestDatabase
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
@@ -27,7 +28,7 @@ public class UserRepositoryTest {
     @Order(1)
     @DisplayName("UserRepository_findById")
     void findByIdTest() {
-        Optional<User> userOptional = Optional.ofNullable(userRepository.getById(1).get());
+        Optional<User> userOptional = userRepository.getById(1);
         assertThat(userOptional)
                 .isPresent()
                 .hasValueSatisfying(user -> {
@@ -35,7 +36,8 @@ public class UserRepositoryTest {
                             assertThat(user).hasFieldOrPropertyWithValue("login", "уизли");
                             assertThat(user).hasFieldOrPropertyWithValue("name", "рон");
                             assertThat(user).hasFieldOrPropertyWithValue("email", "гриффиндор@mail.ru");
-                            assertThat(user).hasFieldOrPropertyWithValue("birthday", LocalDate.of(1993, 3, 12));
+                            assertThat(user).hasFieldOrPropertyWithValue("birthday",
+                                    LocalDate.of(1993, 3, 12));
                         }
                 );
     }
@@ -71,11 +73,11 @@ public class UserRepositoryTest {
         assertThat(userOptional)
                 .isPresent()
                 .hasValueSatisfying(user -> {
-                            assertThat(user).hasFieldOrPropertyWithValue("id", 4);
+                            assertThat(user).hasFieldOrPropertyWithValue("id", 5);
                             assertThat(user).hasFieldOrPropertyWithValue("login", "qrommolnia");
                             assertThat(user).hasFieldOrPropertyWithValue("name", "grom molnia");
                             assertThat(user).hasFieldOrPropertyWithValue("email",
-                                    "gromgrommolnia@yangex.ru");
+                                    "grommolnia@yangex.ru");
                             assertThat(user).hasFieldOrPropertyWithValue("birthday",
                                     LocalDate.of(1993, 12, 15));
                         }
@@ -134,8 +136,9 @@ public class UserRepositoryTest {
                 .isPresent()
                 .hasValueSatisfying(users -> {
                             assertThat(users).isNotEmpty();
-                            assertThat(users).hasSize(1);
-                            assertThat(users).element(0).hasFieldOrPropertyWithValue("id", 2L);
+                            assertThat(users).hasSize(2);
+                            assertThat(users).element(0).hasFieldOrPropertyWithValue("id", 1);
+                            assertThat(users).element(1).hasFieldOrPropertyWithValue("id", 4);
                         }
                 );
     }

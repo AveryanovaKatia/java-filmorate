@@ -91,9 +91,9 @@ public class FilmServiceImpl implements FilmService {
     }
 
     private void validIdUser(final int id) {
-        if (!userRepository.getAllId().contains(id)) {
-            log.error("Пользователя с id = {} нет.", id);
-            throw new NotFoundException("Пользователя с id = {} нет." + id);
+        if (userRepository.getById(id).isEmpty()) {
+            log.error("Киномана с id = {} нет.", id);
+            throw new NotFoundException("Киномана с id = {} нет." + id);
         }
     }
 

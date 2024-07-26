@@ -24,6 +24,4 @@ public interface UserRepository {
     List<User> getAllFriends(int id);
 
     List<User> getMutualFriends(int id, int otherId);
-
-    List<Integer> getAllId();
 }

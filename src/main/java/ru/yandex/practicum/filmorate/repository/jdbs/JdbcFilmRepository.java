@@ -3,6 +3,7 @@ package ru.yandex.practicum.filmorate.repository.jdbs;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.springframework.context.annotation.Primary;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations;
@@ -16,6 +17,7 @@ import ru.yandex.practicum.filmorate.repository.jdbs.extractor.FilmExtractor;
 import java.util.*;
 
 @Repository
+@Primary
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class JdbcFilmRepository implements FilmRepository {
@@ -70,7 +72,7 @@ public class JdbcFilmRepository implements FilmRepository {
                 "description = :description, " +
                 "release_date = :release_date, " +
                 "duration = :duration, " +
-                "mpa = :mpa " +
+                "mpa_id = :mpa_id " +
                 "WHERE film_id = :film_id; ";
         Map<String, Object> params = new HashMap<>();
         params.put("name", film.getName());
@@ -78,7 +80,7 @@ public class JdbcFilmRepository implements FilmRepository {
         params.put("release_date", film.getReleaseDate());
         params.put("duration", film.getDuration());
         params.put("mpa_id", film.getMpa().getId());
-        params.put("id", film.getId());
+        params.put("film_id", film.getId());
         jdbc.update(sql, params);
         addGenres(film.getId(), film.getGenres());
         return film;
@@ -99,7 +101,7 @@ public class JdbcFilmRepository implements FilmRepository {
     @Override
     public Collection<Film> getBestFilm(final int count) {
         String sql = "SELECT films.film_id, films.name, description, release_date, duration, " +
-                "films.mpa_id, mpa_name, " +
+                "films.mpa_id, mpa.mpa_name, " +
                 "genres.genre_id, genres.genre_name, " +
                 "COUNT(likes.film_id) AS like_count " +
                 "FROM films " +
