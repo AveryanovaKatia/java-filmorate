@@ -103,7 +103,7 @@ public class JdbcFilmRepository implements FilmRepository {
         String sql = "SELECT f.film_id, f.name, f.description, f.release_date, f.duration, " +
                 "f.mpa_id, m.mpa_name, " +
                 "fg.genre_id, g.genre_name, " +
-                "COUNT(l.user_id) AS like_count " +
+                "COUNT(DISTINCT l.user_id) AS like_count " +
                 "FROM films AS f " +
                 "LEFT JOIN film_genres AS fg ON f.film_id = fg.film_id " +
                 "LEFT JOIN genres AS g ON fg.genre_id = g.genre_id " +

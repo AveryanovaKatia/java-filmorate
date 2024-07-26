@@ -108,7 +108,7 @@ public class FilmServiceImpl implements FilmService {
         if (Objects.nonNull(film.getGenres())) {
             log.info("Проверка на корректность введенных к фильму жанров");
             Set<Integer> genresId = Set.copyOf(film.getGenres().stream().map(Genre::getId).toList());
-            LinkedHashSet<Genre> genres = new LinkedHashSet<>();
+            Set<Genre> genres = new HashSet<>();
             for (Integer i : genresId) {
                 if (genreRepository.findById(i).isEmpty()) {
                     log.warn("Передан несуществующий жанр");
@@ -118,7 +118,7 @@ public class FilmServiceImpl implements FilmService {
             }
             log.info("Жанры переданы верно");
             film.getGenres().clear();
-            film.setGenres(genres);
+            film.setGenres(new LinkedHashSet<>(genres));
         }
         return film;
     }
