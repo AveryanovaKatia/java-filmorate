@@ -33,7 +33,7 @@ public class FilmServiceImpl implements FilmService {
 
     public List<Film> findAll() {
         log.info("Запрос на получение списка фильмов");
-        if (filmRepository.getAllId().isEmpty()) {
+        if (filmRepository.findAll().isEmpty()) {
             log.info("В приложение еще не добавлен ни один фильм");
             return new ArrayList<>();
         }
@@ -84,7 +84,7 @@ public class FilmServiceImpl implements FilmService {
     }
 
     private void validId(final int id) {
-        if (!filmRepository.getAllId().contains(id)) {
+        if (!filmRepository.findAll().contains(id)) {
             log.error("Фильма с id = {} нет.", id);
             throw new NotFoundException("Фильма с id = {} нет." + id);
         }
