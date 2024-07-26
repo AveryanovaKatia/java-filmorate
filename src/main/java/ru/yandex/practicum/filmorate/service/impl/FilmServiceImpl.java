@@ -42,9 +42,9 @@ public class FilmServiceImpl implements FilmService {
 
     public Film create(final Film film) {
         log.info("Запрос на добавление нового фильма");
-        validAndAddMpaGenres(film);
+        Film filmGenre = validAndAddMpaGenres(film);
         log.info("Запрос на добавление нового фильма в репозиторий");
-        Film newFilm = filmRepository.create(film);
+        Film newFilm = filmRepository.create(filmGenre);
         log.info("Фильм успешно добавлен под id {}", newFilm.getId());
         return newFilm;
     }
@@ -52,8 +52,8 @@ public class FilmServiceImpl implements FilmService {
     public Film update(final Film film) {
         log.info("Запрос на обновление фильма");
         validId(film.getId());
-        validAndAddMpaGenres(film);
-        Film newFilm = filmRepository.update(film);
+        Film filmGenre = validAndAddMpaGenres(film);
+        Film newFilm = filmRepository.update(filmGenre);
         log.info("Фильм с id {} успешно обновлен", film.getId());
         return newFilm;
     }
@@ -97,11 +97,11 @@ public class FilmServiceImpl implements FilmService {
         }
     }
 
-    private void validAndAddMpaGenres(final Film film) {
+    private Film validAndAddMpaGenres(final Film film) {
         if (Objects.nonNull(film.getMpa())) {
             log.info("Проверка на корректность введенного к фильму mpa");
             film.setMpa(mpaRepository.findById(film.getMpa().getId())
-                    .orElseThrow(() -> new NotFoundException("В приложении не предусмотрено такое mpa"))
+                    .orElseThrow(() -> new ValidationException("В приложении не предусмотрено такое mpa"))
             );
         }
 
@@ -116,9 +116,10 @@ public class FilmServiceImpl implements FilmService {
                 }
                 genres.add(genreRepository.findById(i).get());
             }
-                log.info("Жанры переданы верно");
-                film.getGenres().clear();
-                    film.setGenres(genres);
+            log.info("Жанры переданы верно");
+            film.getGenres().clear();
+            film.setGenres(genres);
         }
+        return film;
     }
 }
