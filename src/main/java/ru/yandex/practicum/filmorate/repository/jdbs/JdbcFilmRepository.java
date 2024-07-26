@@ -113,13 +113,24 @@ public class JdbcFilmRepository implements FilmRepository {
 //                "ORDER BY like_count DESC " +
 //                "LIMIT :count;";
 
-        String sql = "SELECT DISTINCT fg.*  " +
-                "FROM film_genres AS fg " +
-                "RIGHT JOIN (SELECT l.film_id " +
+        String sql = "SELECT *  " +
+                "FROM films AS f " +
+                "LEFT JOIN (SELECT l.film_id, COUNT(l.film_id) AS like_count " +
                 "FROM likes AS l " +
                 "GROUP BY l.film_id " +
-                "ORDER BY count(l.film_id) DESC, l.film_id ASC" +
-                "LIMIT :count ) AS ll ON ll.film_id = fg.film_id ";
+                "ORDER BY like_count DESC, l.film_id ASC" +
+                "LIMIT :count ) AS ll ON f.film_id = ll.film_id " +
+                "LEFT JOIN film_genres AS fg ON f.film_id = fg.film_id " +
+                "LEFT JOIN genres AS g ON fg.genre_id = g.genre_id " +
+                "LEFT JOIN mpa AS m ON f.mpa_id = m.mpa_id ";
+
+//        String sl = "SELECT DISTINCT fg.*  " +
+//                "FROM film_genres AS fg " +
+//                "RIGHT JOIN (SELECT l.film_id, COUNT(l.film_id) AS like_count " +
+//                "FROM likes AS l " +
+//                "GROUP BY l.film_id " +
+//                "ORDER BY like_count DESC, l.film_id ASC" +
+//                "LIMIT :count ) AS ll ON ll.film_id = fg.film_id ";
 
         Map<Integer, Film> films = jdbc.query(sql, Map.of("count", count), new FilmsExtractor());
         assert films != null;
