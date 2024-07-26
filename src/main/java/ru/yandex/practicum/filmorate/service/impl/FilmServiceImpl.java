@@ -116,11 +116,9 @@ public class FilmServiceImpl implements FilmService {
                 }
                 genres.add(genreRepository.findById(i).get());
             }
-            if (genres.size() == film.getGenres().size()) {
                 log.info("Жанры переданы верно");
                 film.getGenres().clear();
                     film.setGenres(genres);
-            }
         }
     }
 }
