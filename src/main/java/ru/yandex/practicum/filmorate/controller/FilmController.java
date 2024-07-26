@@ -37,13 +37,12 @@ public class FilmController {
     }
 
     @PutMapping("/films")
-    public Film update(@Validated(UpdateGroup.class) @Valid @RequestBody final Film film) {
+    public Film update(@Validated(UpdateGroup.class) @RequestBody final Film film) {
         return filmService.update(film);
     }
 
     @PutMapping("/films/{id}/like/{userId}")
     public void putLike(@PathVariable @Positive final int id, @PathVariable @Positive final int userId) {
-        filmService.putLike(id, userId);
     }
 
     @DeleteMapping("/films/{id}/like/{userId}")

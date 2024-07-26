@@ -30,5 +30,9 @@ public class Film {
     @NotNull
     Mpa mpa;
     LinkedHashSet<Genre> genres = new LinkedHashSet<>();
-    Set<Integer> likes;
+    LinkedHashSet<Integer> likes = new LinkedHashSet<>();
+
+    public void addLike(int userId) {
+        likes.add(userId);
+    }
 }

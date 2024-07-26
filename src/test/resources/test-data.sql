@@ -30,4 +30,3 @@ INSERT INTO films(name, description, release_date, duration, mpa_id)
 VALUES ('дары смерти', 'description7', '2010-11-07', '198', 5);
 INSERT INTO film_genres(film_id, genre_id) VALUES (1, 1), (2, 2), (3, 3), (4, 4), (5, 5), (6, 5), (7, 2);
 INSERT INTO friends(user_id, friend_user_id) VALUES (1, 2), (1, 3), (2, 1), (2, 4), (3, 1), (3, 4), (4, 1);
-INSERT INTO likes(user_id, film_id) VALUES (1, 1), (1, 2), (2, 1), (2, 4), (3, 3), (4, 5), (4, 6);

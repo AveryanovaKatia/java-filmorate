@@ -12,7 +12,7 @@ public interface FilmRepository {
 
     Film update(Film film);
 
-    void putLike(int id, int userId);
+    void  putLike(int id, int userId);
 
     void deleteLike(int id, int userId);
 
