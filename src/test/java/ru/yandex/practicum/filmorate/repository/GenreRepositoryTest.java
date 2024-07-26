@@ -73,8 +73,7 @@ public class GenreRepositoryTest {
         Optional<Collection<Genre>> genresOptional = Optional.ofNullable(genreRepository.getListGenres(listGenres));
         assertThat(genresOptional)
                 .isPresent()
-                .hasValueSatisfying(genres ->
-                {
+                .hasValueSatisfying(genres -> {
                     assertThat(genres).isNotEmpty();
                     assertThat(genres).hasSize(3);
                     assertThat(genres).element(0).hasFieldOrPropertyWithValue("id", 1);
