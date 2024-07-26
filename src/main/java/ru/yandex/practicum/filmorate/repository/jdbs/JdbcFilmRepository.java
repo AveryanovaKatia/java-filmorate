@@ -59,7 +59,6 @@ public class JdbcFilmRepository implements FilmRepository {
         params.put("release_date", film.getReleaseDate());
         params.put("duration", film.getDuration());
         params.put("mpa_id", film.getMpa().getId());
-        params.put("likes", film.getLikes());
 
         jdbc.update(sql, new MapSqlParameterSource().addValues(params), keyHolder, new String[]{"film_id"});
         film.setId(Objects.requireNonNull(keyHolder.getKey()).intValue());
@@ -89,8 +88,8 @@ public class JdbcFilmRepository implements FilmRepository {
 
     @Override
     public void putLike(final int id, final int userId) {
-        String sql = "MERGE INTO likes(film_id, user_id) VALUES (?, ?); ";
-        jdbcTemplate.update(sql, Map.of("film_id", id, "user_id", userId));
+        String sql = "MERGE INTO likes(film_id, user_id) VALUES (:film_id, :user_id); ";
+        jdbc.update(sql, Map.of("film_id", id, "user_id", userId));
     }
 
     @Override
