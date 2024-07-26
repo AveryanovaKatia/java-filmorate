@@ -117,6 +117,11 @@ public class JdbcFilmRepository implements FilmRepository {
         return films.values().stream().toList();
     }
 
+    @Override
+    public List<Integer> getAllId() {
+        return jdbcTemplate.query("SELECT film_id FROM films; ", (rs, rowNum) -> rs.getInt("film_id"));
+    }
+
     private void addGenres(final int filmId, final Set<Genre> genres) {
         Map<String, Object>[] batch = new HashMap[genres.size()];
         int count = 0;
