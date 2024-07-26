@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Mpa;
 import ru.yandex.practicum.filmorate.repository.MpaRepository;
 import ru.yandex.practicum.filmorate.service.MpaService;
@@ -27,6 +28,10 @@ public class MpaServiceImpl implements MpaService {
     @Override
     public Optional<Mpa> findById(final int id) {
         log.info("запрос на получение рейтинга с id {}", id);
+        if (mpaRepository.findById(id).isEmpty()) {
+            log.error("MPA с id = {} нет.", id);
+            throw new NotFoundException("MPA с id = {} нет." + id);
+        }
         return mpaRepository.findById(id);
     }
 }
