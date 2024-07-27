@@ -1,9 +1,5 @@
 package ru.yandex.practicum.filmorate.repository;
 
-import jakarta.validation.Valid;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.RequestBody;
-import ru.yandex.practicum.filmorate.group.UpdateGroup;
 import ru.yandex.practicum.filmorate.model.User;
 
 import java.util.*;
@@ -13,9 +9,9 @@ public interface UserRepository {
 
     List<User> findAll();
 
-    User create(@Valid @RequestBody User user);
+    User create(User user);
 
-    User update(@Validated(UpdateGroup.class) @RequestBody User user);
+    User update(User user);
 
     void addNewFriend(int id, int friendId);
 

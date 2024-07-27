@@ -36,7 +36,7 @@ public class UserController {
     }
 
     @PutMapping("/users")
-    public User update(@Validated(UpdateGroup.class) @RequestBody final User user) {
+    public User update(@Validated(UpdateGroup.class) @Valid @RequestBody final User user) {
         return userService.update(user);
     }
 

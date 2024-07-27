@@ -14,6 +14,7 @@ import ru.yandex.practicum.filmorate.repository.MpaRepository;
 import ru.yandex.practicum.filmorate.repository.UserRepository;
 import ru.yandex.practicum.filmorate.service.FilmService;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -25,10 +26,11 @@ public class FilmServiceImpl implements FilmService {
     GenreRepository genreRepository;
     MpaRepository mpaRepository;
 
-    public Optional<Film> getById(final int id) {
+    public Film getById(final int id) {
         log.info("Запрос на получение фильма с id = {}", id);
         validId(id);
-        return filmRepository.getDyId(id);
+        return filmRepository.getDyId(id)
+                .orElseThrow(() -> new NotFoundException("Фильма с id = " + id + " не существует"));
     }
 
     public List<Film> findAll() {
@@ -107,18 +109,17 @@ public class FilmServiceImpl implements FilmService {
 
         if (Objects.nonNull(film.getGenres())) {
             log.info("Проверка на корректность введенных к фильму жанров");
-            Set<Integer> genresId = Set.copyOf(film.getGenres().stream().map(Genre::getId).toList());
-            Set<Genre> genres = new TreeSet<>(Comparator.comparing(Genre::getId));
-            for (Integer i : genresId) {
-                if (genreRepository.findById(i).isEmpty()) {
-                    log.warn("Передан несуществующий жанр");
-                    throw new ValidationException("Передан несуществующий жанр");
-                }
-                genres.add(genreRepository.findById(i).get());
+            List<Integer> genresId = film.getGenres().stream().map(Genre::getId).toList();
+            LinkedHashSet<Genre> genres = genreRepository.getListGenres(genresId).stream()
+                    .sorted(Comparator.comparing(Genre::getId)).collect(Collectors.toCollection(LinkedHashSet::new));
+            if (film.getGenres().size() == genres.size()) {
+                log.info("Жанры переданы верно");
+                film.getGenres().clear();
+                film.setGenres(genres);
+            } else {
+                log.warn("Передан несуществующий жанр");
+                throw new ValidationException("Передан несуществующий жанр");
             }
-            log.info("Жанры переданы верно");
-            film.getGenres().clear();
-            film.setGenres(new LinkedHashSet<>(genres));
         }
         return film;
     }

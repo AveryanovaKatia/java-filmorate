@@ -10,7 +10,6 @@ import ru.yandex.practicum.filmorate.model.Mpa;
 import ru.yandex.practicum.filmorate.repository.MpaRepository;
 import ru.yandex.practicum.filmorate.service.MpaService;
 import java.util.List;
-import java.util.Optional;
 
 @Slf4j
 @Service
@@ -26,12 +25,9 @@ public class MpaServiceImpl implements MpaService {
     }
 
     @Override
-    public Optional<Mpa> findById(final int id) {
+    public Mpa findById(final int id) {
         log.info("запрос на получение рейтинга с id {}", id);
-        if (mpaRepository.findById(id).isEmpty()) {
-            log.error("MPA с id = {} нет.", id);
-            throw new NotFoundException("MPA с id = {} нет." + id);
-        }
-        return mpaRepository.findById(id);
+        return mpaRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("MPA с id = " + id + " не существует"));
     }
 }

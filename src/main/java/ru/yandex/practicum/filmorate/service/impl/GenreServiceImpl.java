@@ -28,12 +28,9 @@ public class GenreServiceImpl implements GenreService {
     }
 
     @Override
-    public Optional<Genre> findById(final int id) {
+    public Genre findById(final int id) {
         log.info("запрос на получение жанра с id {}", id);
-        if (genreRepository.findById(id).isEmpty()) {
-            log.error("Жанра с id = {} нет.", id);
-            throw new NotFoundException("Жанра с id = {} нет." + id);
-        }
-        return genreRepository.findById(id);
+        return genreRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Жанра с id = " + id + " не существует"));
     }
 }

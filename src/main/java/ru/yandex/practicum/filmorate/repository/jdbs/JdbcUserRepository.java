@@ -3,7 +3,6 @@ package ru.yandex.practicum.filmorate.repository.jdbs;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import org.springframework.context.annotation.Primary;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
@@ -17,11 +16,12 @@ import ru.yandex.practicum.filmorate.repository.jdbs.extractor.UsersExtractor;
 import java.util.*;
 
 @Repository
-@Primary
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class JdbcUserRepository implements UserRepository {
     NamedParameterJdbcOperations jdbc;
+    UserExtractor userExtractor;
+    UsersExtractor usersExtractor;
 
     @Override
     public Optional<User> getById(final int id) {
@@ -29,7 +29,7 @@ public class JdbcUserRepository implements UserRepository {
                 "FROM users AS u " +
                 "LEFT JOIN friends f ON u.user_id = f.user_id " +
                 "WHERE u.user_id = :user_id;";
-        User user = jdbc.query(sql, Map.of("user_id", id), new UserExtractor());
+        User user = jdbc.query(sql, Map.of("user_id", id), userExtractor);
         return Optional.ofNullable(user);
     }
 
@@ -38,7 +38,7 @@ public class JdbcUserRepository implements UserRepository {
         String sql = "SELECT * " +
                 "FROM users u; ";
                 //"LEFT JOIN friends f ON u.user_id = f.user_id"; ";
-        return jdbc.query(sql, new UsersExtractor());
+        return jdbc.query(sql, usersExtractor);
     }
 
     @Override
@@ -94,7 +94,7 @@ public class JdbcUserRepository implements UserRepository {
                 "WHERE user_id IN (SELECT friend_user_id " +
                 "FROM friends " +
                 "WHERE user_id = :user_id); ";
-        return jdbc.query(sql, Map.of("user_id", id), new UsersExtractor());
+        return jdbc.query(sql, Map.of("user_id", id), usersExtractor);
     }
 
     @Override
@@ -109,6 +109,6 @@ public class JdbcUserRepository implements UserRepository {
                 "LEFT JOIN friends fr ON us.user_id = fr.user_id " +
                 "WHERE us.user_id = :other_id));";
 
-        return jdbc.query(sql, Map.of("user_id", id, "other_id", otherId), new UsersExtractor());
+        return jdbc.query(sql, Map.of("user_id", id, "other_id", otherId), usersExtractor);
     }
 }

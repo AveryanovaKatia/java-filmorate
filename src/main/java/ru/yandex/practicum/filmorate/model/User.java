@@ -16,11 +16,14 @@ import java.time.LocalDate;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class User {
     @NotNull(groups = {UpdateGroup.class})
-    int id;
+    Integer id;
+    @Size(max = 255)
     @Email(message = "Емейл должен содержать @ и наименование")
     String email;
-    @NotBlank(message = "Поле не может быть пустым")
+    @Pattern(regexp = "^[a-zA-Z0-9]{1,255}$",
+            message = "имя пользователя должно быть длиной от 1 до 255 символов без специальных символов")
     String login;
+    @Size(max = 255)
     String name;
     @Past(message = "День рождения не может быть позднее этого мгновения")
     LocalDate birthday;

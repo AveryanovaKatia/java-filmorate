@@ -3,7 +3,6 @@ package ru.yandex.practicum.filmorate.repository.jdbs;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import org.springframework.context.annotation.Primary;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations;
@@ -17,12 +16,13 @@ import ru.yandex.practicum.filmorate.repository.jdbs.extractor.FilmExtractor;
 import java.util.*;
 
 @Repository
-@Primary
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class JdbcFilmRepository implements FilmRepository {
     NamedParameterJdbcOperations jdbc;
     JdbcTemplate jdbcTemplate;
+    FilmExtractor filmExtractor;
+    FilmsExtractor filmsExtractor;
 
     @Override
     public Optional<Film> getDyId(final int id) {
@@ -32,7 +32,7 @@ public class JdbcFilmRepository implements FilmRepository {
                 "LEFT JOIN film_genres fg ON f.film_id = fg.film_id " +
                 "LEFT JOIN genres g ON fg.genre_id = g.genre_id " +
                 "WHERE f.film_id = :film_id; ";
-        Film film = jdbc.query(sql, Map.of("film_id", id), new FilmExtractor());
+        Film film = jdbc.query(sql, Map.of("film_id", id),filmExtractor);
         return Optional.ofNullable(film);
     }
 
@@ -43,7 +43,7 @@ public class JdbcFilmRepository implements FilmRepository {
                 "JOIN mpa m ON f.mpa_id = m.mpa_id " +
                 "LEFT JOIN film_genres fg ON f.film_id = fg.film_id " +
                 "LEFT JOIN genres g ON fg.genre_id = g.genre_id; ";
-        Map<Integer, Film> films = jdbc.query(sql, Map.of(), new FilmsExtractor());
+        Map<Integer, Film> films = jdbc.query(sql, Map.of(), filmsExtractor);
         assert films != null;
         return films.values().stream().toList();
     }
@@ -113,7 +113,7 @@ public class JdbcFilmRepository implements FilmRepository {
                 "ORDER BY like_count DESC " +
                 "LIMIT :count;";
 
-        Map<Integer, Film> films = jdbc.query(sql, Map.of("count", count), new FilmsExtractor());
+        Map<Integer, Film> films = jdbc.query(sql, Map.of("count", count), filmsExtractor);
         assert films != null;
         return films.values().stream().toList();
     }

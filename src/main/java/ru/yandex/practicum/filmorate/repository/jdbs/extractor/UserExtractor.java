@@ -2,11 +2,13 @@ package ru.yandex.practicum.filmorate.repository.jdbs.extractor;
 
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.ResultSetExtractor;
+import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.model.User;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+@Component
 public class UserExtractor implements ResultSetExtractor<User> {
     @Override
     public User extractData(final ResultSet rs) throws SQLException, DataAccessException {

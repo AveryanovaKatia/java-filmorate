@@ -1,16 +1,12 @@
 package ru.yandex.practicum.filmorate.service.impl;
 
-import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.RequestBody;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
-import ru.yandex.practicum.filmorate.group.UpdateGroup;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.repository.UserRepository;
 import ru.yandex.practicum.filmorate.service.UserService;
@@ -37,16 +33,14 @@ public class UserServiceImpl implements UserService {
         return userRepository.findAll();
     }
 
-    public User create(@Valid @RequestBody final User user) {
-        validLogin(user.getLogin());
+    public User create(final User user) {
         User newUser = userRepository.create(user);
         log.info("Пользователь успешно добавлен под id {}", user.getId());
         return newUser;
     }
 
-    public User update(@Validated(UpdateGroup.class) @RequestBody final User user) {
+    public User update(final User user) {
         validId(user.getId());
-        validLogin(user.getLogin());
         User newUser = userRepository.update(user);
         log.info("Пользователь с id {} успешно обновлен", user.getId());
         return newUser;
@@ -74,13 +68,6 @@ public class UserServiceImpl implements UserService {
         validUserEqualsFriend(id, otherId, "Нельзя проверять соответствие друзей у себя и себя");
         log.info("Общие друзья пользователь с id {} и пользователя с id {}", otherId, id);
         return userRepository.getMutualFriends(id, otherId);
-    }
-
-    private void validLogin(String login) {
-        if (login.contains(" ")) {
-            log.error("Логин пользователя не должен содержать пробелы");
-            throw new ValidationException("Логин пользователя не должен содержать пробелы");
-        }
     }
 
     private void validUserEqualsFriend(final int id, final int friendId, final String message) {

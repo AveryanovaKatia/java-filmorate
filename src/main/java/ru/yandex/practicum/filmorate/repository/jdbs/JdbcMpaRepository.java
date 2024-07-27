@@ -3,7 +3,6 @@ package ru.yandex.practicum.filmorate.repository.jdbs;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import org.springframework.context.annotation.Primary;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations;
 import org.springframework.stereotype.Repository;
 import ru.yandex.practicum.filmorate.model.Mpa;
@@ -12,7 +11,6 @@ import java.util.*;
 import java.util.Optional;
 
 @Repository
-@Primary
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class JdbcMpaRepository implements MpaRepository {

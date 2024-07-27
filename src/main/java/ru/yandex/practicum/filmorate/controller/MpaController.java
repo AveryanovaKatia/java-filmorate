@@ -4,6 +4,7 @@ import jakarta.validation.constraints.Positive;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
@@ -15,6 +16,7 @@ import java.util.Optional;
 
 @RestController
 @RequiredArgsConstructor
+@Validated
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class MpaController {
     MpaService mpaService;
@@ -25,7 +27,7 @@ public class MpaController {
     }
 
     @GetMapping("/mpa/{id}")
-    public Optional<Mpa> findById(@PathVariable @Positive final int id) {
+    public Mpa findById(@PathVariable @Positive final int id) {
         return mpaService.findById(id);
     }
 }

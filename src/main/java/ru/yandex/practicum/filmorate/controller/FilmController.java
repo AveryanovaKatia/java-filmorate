@@ -16,12 +16,13 @@ import java.util.*;
 
 @RestController
 @RequiredArgsConstructor
+@Validated
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class FilmController {
     FilmService filmService;
 
     @GetMapping("/films/{id}")
-    public Optional<Film> getById(@PathVariable @Positive final int id) {
+    public Film getById(@PathVariable @Positive final int id) {
         return filmService.getById(id);
     }
 
@@ -37,7 +38,7 @@ public class FilmController {
     }
 
     @PutMapping("/films")
-    public Film update(@Validated(UpdateGroup.class) @RequestBody final Film film) {
+    public Film update(@Validated(UpdateGroup.class) @Valid @RequestBody final Film film) {
         return filmService.update(film);
     }
 

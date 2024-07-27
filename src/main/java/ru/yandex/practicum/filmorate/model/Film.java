@@ -18,21 +18,19 @@ import java.util.*;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class Film {
     @NotNull(groups = {UpdateGroup.class})
-    int id;
+    Integer id;
+    @Size(max = 255)
     @NotBlank(message = "Имя не может быть пустым")
     String name;
     @Size(max = 200, message = "Превышено количество символов")
+    @NotBlank
     String description;
     @StartRelease
+    @NotNull
     LocalDate releaseDate;
     @Min(value = 0, message = "Продолжительность фильма не может быть отрицательным числом")
     int duration;
     @NotNull
     Mpa mpa;
     LinkedHashSet<Genre> genres = new LinkedHashSet<>();
-    LinkedHashSet<Integer> likes = new LinkedHashSet<>();
-
-    public void addLike(int userId) {
-        likes.add(userId);
-    }
 }
