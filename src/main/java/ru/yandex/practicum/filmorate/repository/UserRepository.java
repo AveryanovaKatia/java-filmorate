@@ -1,10 +1,11 @@
-package ru.yandex.practicum.filmorate.service;
+package ru.yandex.practicum.filmorate.repository;
 
 import ru.yandex.practicum.filmorate.model.User;
-import java.util.List;
 
-public interface UserService {
-    User getById(int id);
+import java.util.*;
+
+public interface UserRepository {
+    Optional<User> getById(int id);
 
     List<User> findAll();
 
