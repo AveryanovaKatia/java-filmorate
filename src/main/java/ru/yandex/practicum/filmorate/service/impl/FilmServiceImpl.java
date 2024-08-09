@@ -33,6 +33,7 @@ public class FilmServiceImpl implements FilmService {
     MpaRepository mpaRepository;
     DirectorRepository directorRepository;
 
+    @Override
     public Film getById(final int id) {
         log.info("Запрос на получение фильма с id = {}", id);
         validId(id);
@@ -40,6 +41,7 @@ public class FilmServiceImpl implements FilmService {
                 .orElseThrow(() -> new NotFoundException("Фильма с id = " + id + " не существует"));
     }
 
+    @Override
     public List<Film> findAll() {
         log.info("Запрос на получение списка фильмов");
         if (filmRepository.getAllId().isEmpty()) {
@@ -49,6 +51,7 @@ public class FilmServiceImpl implements FilmService {
         return filmRepository.findAll();
     }
 
+    @Override
     public Film create(final Film film) {
         log.info("Запрос на добавление нового фильма");
         Film filmGenre = validAndAddMpaGenres(film);
@@ -58,6 +61,7 @@ public class FilmServiceImpl implements FilmService {
         return newFilm;
     }
 
+    @Override
     public Film update(final Film film) {
         log.info("Запрос на обновление фильма");
         validId(film.getId());
@@ -67,20 +71,32 @@ public class FilmServiceImpl implements FilmService {
         return newFilm;
     }
 
+    @Override
+    public void delete(final int id) {
+        log.info("Запрос на удаление фильма с id {}", id);
+        validId(id);
+        filmRepository.delete(id);
+    }
+
+    @Override
     public void putLike(final int id, final int userId) {
+        log.info("Пользователь с id {} хочет поставить like фильму с id {}", userId, id);
         validId(id);
         validIdUser(userId);
         filmRepository.putLike(id, userId);
         log.info("Пользователь с id {} поставил like фильму с id {}", userId, id);
     }
 
+    @Override
     public void deleteLike(final int id, final int userId) {
+        log.info("Пользователь с id {} хочет удалить like у фильма с id {}", userId, id);
         validId(id);
         validIdUser(userId);
         filmRepository.deleteLike(id, userId);
         log.info("Пользователь с id {} удалил like у фильма с id {}", userId, id);
     }
 
+    @Override
     public List<Film> getBestFilm(final int count) {
         log.info("Запрос на получение списка лучших фильмов");
         int size = filmRepository.findAll().size();

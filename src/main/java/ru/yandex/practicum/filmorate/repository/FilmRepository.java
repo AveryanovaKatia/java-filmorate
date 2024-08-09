@@ -12,6 +12,8 @@ public interface FilmRepository {
 
     Film update(Film film);
 
+    void delete(int id);
+
     void  putLike(int id, int userId);
 
     void deleteLike(int id, int userId);

@@ -74,6 +74,12 @@ public class JdbcUserRepository implements UserRepository {
     }
 
     @Override
+    public void delete(final int id) {
+        String sql = "DELETE FROM users WHERE user_id = :user_id; ";
+        jdbc.update(sql, Map.of("user_id", id));
+    }
+
+    @Override
     public void addNewFriend(final int id, final int friendId) {
         String sql = "MERGE INTO friends (user_id, friend_user_id) " +
                 "VALUES (:user_id, :friend_user_id); ";

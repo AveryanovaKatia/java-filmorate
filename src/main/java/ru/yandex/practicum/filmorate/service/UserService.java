@@ -12,6 +12,8 @@ public interface UserService {
 
     User update(User user);
 
+    void delete(int id);
+
     void addNewFriend(int id, int friendId);
 
     void deleteFriend(int id, int friendId);

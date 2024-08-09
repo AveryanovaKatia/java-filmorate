@@ -103,6 +103,12 @@ public class JdbcFilmRepository implements FilmRepository {
     }
 
     @Override
+    public void delete(final int id) {
+        String sql = "DELETE FROM films WHERE film_id = :film_id; ";
+        jdbc.update(sql, Map.of("film_id", id));
+    }
+
+    @Override
     public void putLike(final int id, final int userId) {
         String sql = "MERGE INTO likes(film_id, user_id) VALUES (:film_id, :user_id); ";
         jdbc.update(sql, Map.of("film_id", id, "user_id", userId));

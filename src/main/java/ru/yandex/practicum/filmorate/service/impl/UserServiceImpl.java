@@ -28,42 +28,58 @@ public class UserServiceImpl implements UserService {
                 .orElseThrow(() -> new NotFoundException("Пользователя с id = " + id + " не существует"));
     }
 
+    @Override
     public List<User> findAll() {
         log.info("Запрос на получение списка пользователей");
         return userRepository.findAll();
     }
 
+    @Override
     public User create(final User user) {
+        log.info("Запрос на добавление пользователя");
         User newUser = userRepository.create(user);
         log.info("Пользователь успешно добавлен под id {}", user.getId());
         return newUser;
     }
 
+    @Override
     public User update(final User user) {
+        log.info("Запрос на обновление пользователя с id {}", user.getId());
         validId(user.getId());
         User newUser = userRepository.update(user);
         log.info("Пользователь с id {} успешно обновлен", user.getId());
         return newUser;
     }
 
+    @Override
+    public void delete(final int id) {
+        log.info("Запрос на удаление пользователя с id {}", id);
+        //validId(id);
+        userRepository.delete(id);
+    }
+
+    @Override
     public void addNewFriend(final int id, final int friendId) {
         validUserEqualsFriend(id, friendId, "Нельзя добавить пользователя в друзья к самому себе");
         userRepository.addNewFriend(id, friendId);
         log.info("Пользователь с id {} успешно добавлен в друзья к пользователю с id {}", friendId, id);
     }
 
+    @Override
     public void deleteFriend(final int id, final int friendId) {
         validUserEqualsFriend(id, friendId, "Нельзя удалить пользователя из друзей у самого себя");
         userRepository.deleteFriend(id, friendId);
         log.info("Пользователь с id {} успешно удален из друзей у пользователя с id {}", friendId, id);
     }
 
+    @Override
     public List<User> getAllFriends(final int id) {
-        validId(id);
         log.info("Запрос на получение всех друзей пользователя с id {}", id);
+        validId(id);
         return userRepository.getAllFriends(id);
     }
 
+    @Override
     public List<User> getMutualFriends(final int id, final int otherId) {
         validUserEqualsFriend(id, otherId, "Нельзя проверять соответствие друзей у себя и себя");
         log.info("Общие друзья пользователь с id {} и пользователя с id {}", otherId, id);
