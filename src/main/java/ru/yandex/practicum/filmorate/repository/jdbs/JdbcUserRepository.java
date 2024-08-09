@@ -13,7 +13,11 @@ import ru.yandex.practicum.filmorate.repository.UserRepository;
 import ru.yandex.practicum.filmorate.repository.jdbs.extractor.UserExtractor;
 import ru.yandex.practicum.filmorate.repository.jdbs.extractor.UsersExtractor;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
 
 @Repository
 @RequiredArgsConstructor

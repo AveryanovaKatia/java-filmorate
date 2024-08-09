@@ -20,11 +20,11 @@ genre_name varchar(255) NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS film_genres (
-film_id integer REFERENCES films (film_id) ON DELETE CASCADE,
-genre_id integer REFERENCES genres (genre_id) ON DELETE CASCADE,
-CONSTRAINT unique_pair UNIQUE (
-    film_id, genre_id
-    )
+film_id integer NOT NULL,
+genre_id integer NOT NULL,
+CONSTRAINT unique_pair UNIQUE (film_id, genre_id),
+CONSTRAINT "film_genre_fk" FOREIGN KEY (film_id) REFERENCES films ON DELETE CASCADE,
+CONSTRAINT "genre_film_fk" FOREIGN KEY (genre_id) REFERENCES genres ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS directors (
@@ -33,11 +33,11 @@ director_name varchar(255) NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS film_directors (
-film_id integer REFERENCES films (film_id) ON DELETE CASCADE,
-director_id integer REFERENCES directors (director_id) ON DELETE CASCADE,
-CONSTRAINT unique_pair_fd UNIQUE (
-     film_id, director_id
-     )
+film_id integer NOT NULL,
+director_id integer NOT NULL,
+CONSTRAINT unique_pair_fd UNIQUE (film_id, director_id),
+CONSTRAINT "film_dir_fk" FOREIGN KEY (film_id) REFERENCES films ON DELETE CASCADE,
+CONSTRAINT "dit_film_fk" FOREIGN KEY (director_id) REFERENCES directors ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS users (
@@ -46,24 +46,22 @@ CREATE TABLE IF NOT EXISTS users (
  login varchar(255) NOT NULL,
  email varchar(255) NOT NULL,
  birthday date,
-      CONSTRAINT uc_Users_email UNIQUE (
-        email
-    ),
-    CONSTRAINT uc_Users_login UNIQUE (
-        login
-    )
+ CONSTRAINT uc_Users_email UNIQUE (email),
+ CONSTRAINT uc_Users_login UNIQUE (login)
  );
 
 CREATE TABLE IF NOT EXISTS likes (
-film_id integer REFERENCES films (film_id) ON DELETE CASCADE,
-user_id integer REFERENCES users (user_id) ON DELETE CASCADE,
-CONSTRAINT "likes_pk"
-        PRIMARY KEY (user_id , film_id)
+film_id integer NOT NULL,
+user_id integer NOT NULL,
+CONSTRAINT "likes_pk" PRIMARY KEY (user_id , film_id),
+CONSTRAINT "like_film_fk" FOREIGN KEY (film_id) REFERENCES films ON DELETE CASCADE,
+CONSTRAINT "like_user_fk" FOREIGN KEY (user_id) REFERENCES users ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS friends (
-user_id integer REFERENCES users (user_id) ON DELETE CASCADE,
-friend_user_id integer REFERENCES users (user_id) ON DELETE CASCADE,
-CONSTRAINT "friends_pk"
-        PRIMARY KEY (user_id, friend_user_id)
+user_id integer NOT NULL,
+friend_user_id integer NOT NULL,
+CONSTRAINT "friends_pk" PRIMARY KEY (user_id, friend_user_id),
+CONSTRAINT "user_fk" FOREIGN KEY (user_id) REFERENCES users ON DELETE CASCADE,
+CONSTRAINT "friend_user_fk" FOREIGN KEY (user_id) REFERENCES users ON DELETE CASCADE
 );

@@ -72,7 +72,7 @@ public class FilmServiceImpl implements FilmService {
     }
 
     @Override
-    public void delete(final int id) {
+    public void delete(int id) {
         log.info("Запрос на удаление фильма с id {}", id);
         validId(id);
         filmRepository.delete(id);
@@ -99,12 +99,6 @@ public class FilmServiceImpl implements FilmService {
     @Override
     public List<Film> getBestFilm(final int count) {
         log.info("Запрос на получение списка лучших фильмов");
-        int size = filmRepository.findAll().size();
-        if (size < count) {
-            log.info("В запросе на получение списка лучших фильмов count превышвет размер списка");
-            return filmRepository.getBestFilm(size);
-        }
-        log.info("Отбираем лучшие фильмы");
         return filmRepository.getBestFilm(count);
     }
 

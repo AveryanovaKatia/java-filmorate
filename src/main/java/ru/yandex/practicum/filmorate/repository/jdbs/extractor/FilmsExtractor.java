@@ -31,6 +31,7 @@ public class FilmsExtractor implements ResultSetExtractor<Map<Integer, Film>> {
                 film.getGenres().add(new Genre(rs.getInt("genre_id"), rs.getString("genre_name")));
                 films.put(filmId, film);
             }
+
             if (Objects.nonNull(films.get(filmId))) {
                 if (rs.getInt("genre_id") != 0) {
                     films.get(filmId)
