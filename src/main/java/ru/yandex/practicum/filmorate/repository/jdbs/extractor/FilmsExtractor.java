@@ -32,13 +32,17 @@ public class FilmsExtractor implements ResultSetExtractor<Map<Integer, Film>> {
                 films.put(filmId, film);
             }
             if (Objects.nonNull(films.get(filmId))) {
-                films.get(filmId)
-                        .getGenres()
-                        .add(new Genre(rs.getInt("genre_id"), rs.getString("genre_name")));
-                films.get(filmId)
-                        .getDirectors()
-                        .add(new Director(rs.getInt("director_id"),
-                                rs.getString("director_name")));
+                if (rs.getInt("genre_id") != 0) {
+                    films.get(filmId)
+                            .getGenres()
+                            .add(new Genre(rs.getInt("genre_id"), rs.getString("genre_name")));
+                }
+                if (rs.getInt("director_id") != 0) {
+                    films.get(filmId)
+                            .getDirectors()
+                            .add(new Director(rs.getInt("director_id"),
+                                    rs.getString("director_name")));
+                }
             }
         }
         return films;

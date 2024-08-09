@@ -19,4 +19,6 @@ public interface FilmService {
     List<Film> getBestFilm(int count);
 
     List<Film> directorFilmsSortBy(int directorId, String sortBy);
+
+    List<Film> search(String query, String by);
 }

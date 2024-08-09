@@ -3,6 +3,7 @@ package ru.yandex.practicum.filmorate.repository.jdbs;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations;
@@ -23,7 +24,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 
-
+@Slf4j
 @Repository
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
@@ -181,6 +182,43 @@ public class JdbcFilmRepository implements FilmRepository {
         String sqlInsert = "INSERT INTO film_genres (film_id, genre_id) VALUES (:film_id, :genre_id); ";
         jdbc.batchUpdate(sqlDelete, batch);
         jdbc.batchUpdate(sqlInsert, batch);
+    }
+
+    @Override
+    public List<Film> search(String query, String by) {
+        String select =  "SELECT f.film_id, f.name, f.description, f.release_date, f.duration, " +
+                "f.mpa_id, m.mpa_name, " +
+                "fg.genre_id, g.genre_name, " +
+                "fd.director_id, d.director_name, " +
+                "COUNT(DISTINCT l.user_id) AS like_count " +
+                "FROM films AS f " +
+                "LEFT JOIN film_genres AS fg ON f.film_id = fg.film_id " +
+                "LEFT JOIN genres AS g ON fg.genre_id = g.genre_id " +
+                "LEFT JOIN mpa AS m ON f.mpa_id = m.mpa_id " +
+                "LEFT JOIN film_directors AS fd ON f.film_id = fd.film_id " +
+                "LEFT JOIN directors AS d ON fd.director_id = d.director_id " +
+                "LEFT JOIN likes AS l ON f.film_id = l.film_id ";
+
+        String group =  "GROUP BY f.film_id, fg.genre_id, fd.director_id " +
+                "ORDER BY like_count DESC; ";
+
+        String param = "%" + query + "%";
+        String sqlQuery;
+
+        if (by.equals("director")) {
+            log.info("Поиск фильма по режиссёру");
+            sqlQuery = select + "WHERE d.director_name LIKE :param " + group;
+        } else if (by.equals("title")) {
+            log.info("Поиск фильма по названию");
+            sqlQuery = select + "WHERE f.name LIKE :param " + group;
+        } else {
+            log.info("Поиск фильма по названию и по режиссёру");
+            sqlQuery = select + "WHERE f.name LIKE :param OR d.director_name LIKE :param " + group;
+        }
+
+        Map<Integer, Film> films = jdbc.query(sqlQuery, Map.of("param", param), filmsExtractor);
+        assert films != null;
+        return films.values().stream().toList();
     }
 
     private void addDirectors(final int filmId, final Set<Director> directors) {

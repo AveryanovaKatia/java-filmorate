@@ -21,4 +21,6 @@ public interface FilmRepository {
     List<Integer> getAllId();
 
     List<Film> directorFilmsSortBy(int directorId, String sortBy);
+
+    List<Film> search(String query, String by);
 }

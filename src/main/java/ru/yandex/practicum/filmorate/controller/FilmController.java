@@ -13,7 +13,7 @@ import ru.yandex.practicum.filmorate.group.UpdateGroup;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.service.FilmService;
 
-import java.util.*;
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -63,5 +63,11 @@ public class FilmController {
     public List<Film> directorFilmsSortBy(@PathVariable @Positive final int directorId,
                              @RequestParam @NotBlank String sortBy) {
         return filmService.directorFilmsSortBy(directorId, sortBy);
+    }
+
+    @GetMapping("/films/search")
+    public List<Film> search(@RequestParam @NotBlank String query,
+                             @RequestParam(required = false, defaultValue = "title") String by) {
+        return filmService.search(query, by);
     }
 }
