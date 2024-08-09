@@ -105,6 +105,26 @@ public class FilmServiceImpl implements FilmService {
         return filmRepository.directorFilmsSortBy(directorId, sortBy);
     }
 
+
+    @Override
+    public List<Film> search(String query, String by) {
+        log.info("Запрос на поиск фильма по названию и/или по режиссёру");
+        if (!by.equals("director") && !by.equals("title")
+                && !by.equals("director,title") && !by.equals("title,director")) {
+            log.error("Параметры запроса переданны неверно");
+            throw new NotFoundException("Параметры запроса переданны неверно");
+        }
+        return filmRepository.search(query, by);
+    }
+
+    @Override
+    public List<Film> common(int userId, int friendId) {
+        log.info("Запрос на вывод общих с другом фильмов");
+        validIdUser(userId);
+        validIdUser(friendId);
+        return filmRepository.common(userId, friendId);
+    }
+
     private void validId(final int id) {
         if (!filmRepository.getAllId().contains(id)) {
             log.error("Фильма с id = {} нет.", id);
@@ -142,16 +162,5 @@ public class FilmServiceImpl implements FilmService {
             }
         }
         return film;
-    }
-
-    @Override
-    public List<Film> search(String query, String by) {
-        log.info("Запрос на поиск фильма по названию и/или по режиссёру");
-        if (!by.equals("director") && !by.equals("title")
-        && !by.equals("director,title") && !by.equals("title,director")) {
-            log.error("Параметры запроса переданны неверно");
-            throw new NotFoundException("Параметры запроса переданны неверно");
-        }
-        return filmRepository.search(query, by);
     }
 }

@@ -66,8 +66,13 @@ public class FilmController {
     }
 
     @GetMapping("/films/search")
-    public List<Film> search(@RequestParam @NotBlank String query,
-                             @RequestParam(required = false, defaultValue = "title") String by) {
+    public List<Film> search(@RequestParam @NotBlank final String query,
+                             @RequestParam(required = false, defaultValue = "title") final String by) {
         return filmService.search(query, by);
+    }
+
+    @GetMapping("/films/common")
+    public List<Film> common(@RequestParam final int userId, @RequestParam final int friendId) {
+        return filmService.common(userId, friendId);
     }
 }
