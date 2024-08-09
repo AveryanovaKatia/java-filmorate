@@ -35,7 +35,7 @@ public class ErrorHandler {
     @ExceptionHandler
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public Map<String, String> handlerInternal(final Exception exception) {
-        log.debug("Получен статус 400 Bad request {}", exception.getMessage(), exception);
+        log.debug("Получен статус 500 Internal Server Error {}", exception.getMessage(), exception);
         return Map.of("error", exception.getMessage());
     }
 }

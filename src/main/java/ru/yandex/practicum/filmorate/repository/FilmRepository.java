@@ -19,4 +19,6 @@ public interface FilmRepository {
     List<Film> getBestFilm(int count);
 
     List<Integer> getAllId();
+
+    List<Film> directorFilmsSortBy(int directorId, String sortBy);
 }

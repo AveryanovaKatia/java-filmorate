@@ -9,11 +9,20 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
-import ru.yandex.practicum.filmorate.model.*;
+import ru.yandex.practicum.filmorate.model.Director;
+import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.repository.FilmRepository;
 import ru.yandex.practicum.filmorate.repository.jdbs.extractor.FilmsExtractor;
 import ru.yandex.practicum.filmorate.repository.jdbs.extractor.FilmExtractor;
-import java.util.*;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
+
 
 @Repository
 @RequiredArgsConstructor
@@ -31,8 +40,10 @@ public class JdbcFilmRepository implements FilmRepository {
                 "JOIN mpa m ON f.mpa_id = m.mpa_id " +
                 "LEFT JOIN film_genres fg ON f.film_id = fg.film_id " +
                 "LEFT JOIN genres g ON fg.genre_id = g.genre_id " +
+                "LEFT JOIN film_directors AS fd ON f.film_id = fd.film_id " +
+                "LEFT JOIN directors AS d ON fd.director_id = d.director_id " +
                 "WHERE f.film_id = :film_id; ";
-        Film film = jdbc.query(sql, Map.of("film_id", id),filmExtractor);
+        Film film = jdbc.query(sql, Map.of("film_id", id), filmExtractor);
         return Optional.ofNullable(film);
     }
 
@@ -41,6 +52,8 @@ public class JdbcFilmRepository implements FilmRepository {
         String sql = "SELECT * " +
                 "FROM films f " +
                 "JOIN mpa m ON f.mpa_id = m.mpa_id " +
+                "LEFT JOIN film_directors AS fd ON f.film_id = fd.film_id " +
+                "LEFT JOIN directors AS d ON fd.director_id = d.director_id " +
                 "LEFT JOIN film_genres fg ON f.film_id = fg.film_id " +
                 "LEFT JOIN genres g ON fg.genre_id = g.genre_id; ";
         Map<Integer, Film> films = jdbc.query(sql, Map.of(), filmsExtractor);
@@ -63,6 +76,7 @@ public class JdbcFilmRepository implements FilmRepository {
         jdbc.update(sql, new MapSqlParameterSource().addValues(params), keyHolder, new String[]{"film_id"});
         film.setId(Objects.requireNonNull(keyHolder.getKey()).intValue());
         addGenres(film.getId(), film.getGenres());
+        addDirectors(film.getId(), film.getDirectors());
         return film;
     }
 
@@ -83,6 +97,7 @@ public class JdbcFilmRepository implements FilmRepository {
         params.put("film_id", film.getId());
         jdbc.update(sql, params);
         addGenres(film.getId(), film.getGenres());
+        addDirectors(film.getId(), film.getDirectors());
         return film;
     }
 
@@ -103,15 +118,18 @@ public class JdbcFilmRepository implements FilmRepository {
         String sql = "SELECT f.film_id, f.name, f.description, f.release_date, f.duration, " +
                 "f.mpa_id, m.mpa_name, " +
                 "fg.genre_id, g.genre_name, " +
+                "fd.director_id, d.director_name, " +
                 "COUNT(DISTINCT l.user_id) AS like_count " +
                 "FROM films AS f " +
                 "LEFT JOIN film_genres AS fg ON f.film_id = fg.film_id " +
                 "LEFT JOIN genres AS g ON fg.genre_id = g.genre_id " +
                 "LEFT JOIN mpa AS m ON f.mpa_id = m.mpa_id " +
+                "LEFT JOIN film_directors AS fd ON f.film_id = fd.film_id " +
+                "LEFT JOIN directors AS d ON fd.director_id = d.director_id " +
                 "LEFT JOIN likes AS l ON f.film_id = l.film_id " +
                 "GROUP BY f.film_id, fg.genre_id " +
                 "ORDER BY like_count DESC " +
-                "LIMIT :count;";
+                "LIMIT :count; ";
 
         Map<Integer, Film> films = jdbc.query(sql, Map.of("count", count), filmsExtractor);
         assert films != null;
@@ -123,6 +141,33 @@ public class JdbcFilmRepository implements FilmRepository {
         return jdbcTemplate.query("SELECT film_id FROM films; ", (rs, rowNum) -> rs.getInt("film_id"));
     }
 
+    @Override
+    public List<Film> directorFilmsSortBy(int directorId, String sortBy) {
+        String select = "SELECT f.film_id, f.name, f.description, f.release_date, f.duration, " +
+                "f.mpa_id, m.mpa_name, " +
+                "fg.genre_id, g.genre_name, " +
+                "fd.director_id, d.director_name, " +
+                "COUNT(DISTINCT l.user_id) AS like_count " +
+                "FROM films AS f " +
+                "LEFT JOIN film_genres AS fg ON f.film_id = fg.film_id " +
+                "LEFT JOIN genres AS g ON fg.genre_id = g.genre_id " +
+                "LEFT JOIN mpa AS m ON f.mpa_id = m.mpa_id " +
+                "LEFT JOIN film_directors AS fd ON f.film_id = fd.film_id " +
+                "LEFT JOIN directors AS d ON fd.director_id = d.director_id " +
+                "LEFT JOIN likes AS l ON f.film_id = l.film_id " +
+                "WHERE fd.director_id = :director_id " +
+                "GROUP BY f.film_id, fg.genre_id ";
+        String sql;
+        if (sortBy.equals("year")) {
+            sql = select + "ORDER BY f.release_date; ";
+        } else {
+            sql = select + "ORDER BY like_count DESC; ";
+        }
+            Map<Integer, Film> films = jdbc.query(sql, Map.of("director_id", directorId), filmsExtractor);
+            assert films != null;
+            return films.values().stream().toList();
+    }
+
     private void addGenres(final int filmId, final Set<Genre> genres) {
         Map<String, Object>[] batch = new HashMap[genres.size()];
         int count = 0;
@@ -132,8 +177,23 @@ public class JdbcFilmRepository implements FilmRepository {
             map.put("genre_id", genre.getId());
             batch[count++] = map;
         }
-        String sqlDelete = "DELETE FROM film_genres WHERE film_id = :film_id AND genre_id = :genre_id; ";
+        String sqlDelete = "DELETE FROM film_genres WHERE film_id = :film_id; ";
         String sqlInsert = "INSERT INTO film_genres (film_id, genre_id) VALUES (:film_id, :genre_id); ";
+        jdbc.batchUpdate(sqlDelete, batch);
+        jdbc.batchUpdate(sqlInsert, batch);
+    }
+
+    private void addDirectors(final int filmId, final Set<Director> directors) {
+        Map<String, Object>[] batch = new HashMap[directors.size()];
+        int count = 0;
+        for (Director director : directors) {
+            Map<String, Object> map = new HashMap<>();
+            map.put("film_id", filmId);
+            map.put("director_id", director.getId());
+            batch[count++] = map;
+        }
+        String sqlDelete = "DELETE FROM film_directors WHERE film_id = :film_id; ";
+        String sqlInsert = "INSERT INTO film_directors (film_id, director_id) VALUES (:film_id, :director_id); ";
         jdbc.batchUpdate(sqlDelete, batch);
         jdbc.batchUpdate(sqlInsert, batch);
     }

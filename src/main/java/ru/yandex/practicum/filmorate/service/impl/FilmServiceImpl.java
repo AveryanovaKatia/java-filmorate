@@ -8,12 +8,18 @@ import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.*;
+import ru.yandex.practicum.filmorate.repository.DirectorRepository;
 import ru.yandex.practicum.filmorate.repository.FilmRepository;
 import ru.yandex.practicum.filmorate.repository.GenreRepository;
 import ru.yandex.practicum.filmorate.repository.MpaRepository;
 import ru.yandex.practicum.filmorate.repository.UserRepository;
 import ru.yandex.practicum.filmorate.service.FilmService;
-import java.util.*;
+
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
@@ -25,6 +31,7 @@ public class FilmServiceImpl implements FilmService {
     UserRepository userRepository;
     GenreRepository genreRepository;
     MpaRepository mpaRepository;
+    DirectorRepository directorRepository;
 
     public Film getById(final int id) {
         log.info("Запрос на получение фильма с id = {}", id);
@@ -83,6 +90,19 @@ public class FilmServiceImpl implements FilmService {
         }
         log.info("Отбираем лучшие фильмы");
         return filmRepository.getBestFilm(count);
+    }
+
+    @Override
+    public List<Film> directorFilmsSortBy(int directorId, String sortBy) {
+        if (!sortBy.equals("year") && !sortBy.equals("likes")) {
+            log.error("Неверно указаны параметры запроса");
+            throw new NotFoundException("Неверно указаны параметры запроса");
+        }
+        if (!directorRepository.getAllId().contains(directorId)) {
+            log.error("Режиссера с id = {} нет.", directorId);
+            throw new NotFoundException("Режиссера с id = {} нет." + directorId);
+        }
+        return filmRepository.directorFilmsSortBy(directorId, sortBy);
     }
 
     private void validId(final int id) {

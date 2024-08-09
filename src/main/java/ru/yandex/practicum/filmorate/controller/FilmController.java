@@ -1,6 +1,7 @@
 package ru.yandex.practicum.filmorate.controller;
 
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Positive;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -56,5 +57,11 @@ public class FilmController {
     @GetMapping("/films/popular")
     public List<Film> getBestFilm(@RequestParam(defaultValue = "10") @Positive final int count) {
         return filmService.getBestFilm(count);
+    }
+
+    @GetMapping("/films/director/{directorId}")
+    public List<Film> directorFilmsSortBy(@PathVariable @Positive final int directorId,
+                             @RequestParam @NotBlank String sortBy) {
+        return filmService.directorFilmsSortBy(directorId, sortBy);
     }
 }

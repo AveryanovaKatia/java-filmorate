@@ -8,7 +8,8 @@ import lombok.experimental.FieldDefaults;
 import ru.yandex.practicum.filmorate.validation.StartRelease;
 import ru.yandex.practicum.filmorate.group.UpdateGroup;
 import java.time.LocalDate;
-import java.util.*;
+import java.util.LinkedHashSet;
+
 
 /**
  * Film.
@@ -33,4 +34,5 @@ public class Film {
     @NotNull
     Mpa mpa;
     LinkedHashSet<Genre> genres = new LinkedHashSet<>();
+    LinkedHashSet<Director> directors = new LinkedHashSet<>();
 }
