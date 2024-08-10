@@ -7,11 +7,21 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import ru.yandex.practicum.filmorate.group.UpdateGroup;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.service.UserService;
-import java.util.*;
+
+import java.util.List;
+
 
 @RestController
 @RequiredArgsConstructor
@@ -65,5 +75,10 @@ public class UserController {
     @GetMapping("/users/{id}/friends/common/{otherId}")
     public List<User> getMutualFriends(@PathVariable final int id, @PathVariable final int otherId) {
         return userService.getMutualFriends(id, otherId);
+    }
+
+    @GetMapping("/users/{id}/recommendations")
+    public List<Film> recommendations(@PathVariable final int id) {
+        return userService.recommendations(id);
     }
 }

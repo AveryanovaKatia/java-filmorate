@@ -1,5 +1,6 @@
 package ru.yandex.practicum.filmorate.repository;
 
+import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.User;
 
 import java.util.*;
@@ -22,4 +23,6 @@ public interface UserRepository {
     List<User> getAllFriends(int id);
 
     List<User> getMutualFriends(int id, int otherId);
+
+    List<Film> recommendations(int id);
 }

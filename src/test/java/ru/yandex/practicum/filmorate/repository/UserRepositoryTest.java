@@ -8,12 +8,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.ImportResource;
+import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.model.Mpa;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.model.Genre;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Optional;
+
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest
 @ImportResource
@@ -23,6 +30,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class UserRepositoryTest {
     UserRepository userRepository;
+    FilmRepository filmRepository;
 
     @Test
     @Order(1)
@@ -141,5 +149,151 @@ public class UserRepositoryTest {
                             assertThat(users).element(1).hasFieldOrPropertyWithValue("id", 4);
                         }
                 );
+    }
+
+
+    @Test
+    @Order(7)
+    @DisplayName("UserRepository_Recommendations_ForTwoLikes")
+    public void recommendationsForTwoLikesTest() {
+        User newUser = new User();
+        newUser.setLogin("Katia");
+        newUser.setName("ka tia");
+        newUser.setEmail("katia@yangex.ru");
+        newUser.setBirthday(LocalDate.of(1993, 12, 15));
+        int newUserId = userRepository.create(newUser).getId();
+
+        User newUser2 = new User();
+        newUser2.setLogin("Valeria");
+        newUser2.setName("vale ria");
+        newUser2.setEmail("valeria@yangex.ru");
+        newUser2.setBirthday(LocalDate.of(1993, 12, 15));
+        int newUser2Id = userRepository.create(newUser2).getId();
+
+        Film newFilm = new Film();
+        newFilm.setName("проклятое дитя");
+        newFilm.setDescription("description");
+        newFilm.setReleaseDate(LocalDate.of(2022, 1, 1));
+        newFilm.setDuration(128);
+        newFilm.setMpa(new Mpa(1, null));
+        int newFilmId = filmRepository.create(newFilm).getId();
+        newFilm.setId(newFilmId);
+        filmRepository.putLike(newFilmId, newUserId);
+        filmRepository.putLike(newFilmId, newUser2Id);
+
+        Film newFilm2 = new Film();
+        newFilm2.setName("фантастические твари");
+        newFilm2.setDescription("description");
+        newFilm2.setReleaseDate(LocalDate.of(2001, 11, 22));
+        newFilm2.setDuration(121);
+        newFilm2.setMpa(new Mpa(1, "G"));
+        LinkedHashSet<Genre> genres = new LinkedHashSet<>();
+        genres.add(new Genre(1, "Комедия"));
+        newFilm2.setGenres(genres);
+        int newFilm2Id = filmRepository.create(newFilm2).getId();
+        newFilm2.setId(newFilm2Id);
+        filmRepository.putLike(newFilm2Id, newUserId);
+        List<Film> films = new ArrayList<>();
+        films.add(newFilm2);
+
+        assertThat(userRepository.recommendations(newUser2Id)).hasSize(1);
+        assertEquals(films, userRepository.recommendations(newUser2Id));
+    }
+
+    @Test
+    @Order(8)
+    @DisplayName("UserRepository_Recommendations_ForNoLikes")
+    public void recommendationsForNoLikesTest() {
+        User newUser = new User();
+        newUser.setLogin("Taia");
+        newUser.setName("ta ia");
+        newUser.setEmail("taia@yangex.ru");
+        newUser.setBirthday(LocalDate.of(1993, 12, 15));
+        int newUserId = userRepository.create(newUser).getId();
+
+        User newUser2 = new User();
+        newUser2.setLogin("Raia");
+        newUser2.setName("ra ia");
+        newUser2.setEmail("raia@yangex.ru");
+        newUser2.setBirthday(LocalDate.of(1993, 12, 15));
+        int newUser2Id = userRepository.create(newUser2).getId();
+
+        Film newFilm = new Film();
+        newFilm.setName("Тайны Дамблдора");
+        newFilm.setDescription("description");
+        newFilm.setReleaseDate(LocalDate.of(2022, 1, 1));
+        newFilm.setDuration(128);
+        newFilm.setMpa(new Mpa(1, null));
+        int newFilmId = filmRepository.create(newFilm).getId();
+        newFilm.setId(newFilmId);
+        filmRepository.putLike(newFilmId, newUserId);
+
+        Film newFilm2 = new Film();
+        newFilm2.setName("Преступление Гриндевальда");
+        newFilm2.setDescription("description");
+        newFilm2.setReleaseDate(LocalDate.of(2001, 11, 22));
+        newFilm2.setDuration(121);
+        newFilm2.setMpa(new Mpa(1, "G"));
+        LinkedHashSet<Genre> genres = new LinkedHashSet<>();
+        genres.add(new Genre(1, "Комедия"));
+        newFilm2.setGenres(genres);
+        int newFilm2Id = filmRepository.create(newFilm2).getId();
+        newFilm2.setId(newFilm2Id);
+        filmRepository.putLike(newFilm2Id, newUserId);
+        List<Film> films = new ArrayList<>();
+        films.add(newFilm2);
+
+        assertThat(userRepository.recommendations(newUser2Id)).hasSize(0);
+        assertThat(userRepository.recommendations(newUserId)).hasSize(0);
+    }
+
+
+    @Test
+    @Order(9)
+    @DisplayName("UserRepository_Recommendations_ForNoAnotherLikes")
+    public void recommendationsForNoAnotherLikesTest() {
+        User newUser = new User();
+        newUser.setLogin("Ania");
+        newUser.setName("An ia");
+        newUser.setEmail("Ania@yangex.ru");
+        newUser.setBirthday(LocalDate.of(1993, 12, 15));
+        int newUserId = userRepository.create(newUser).getId();
+
+        User newUser2 = new User();
+        newUser2.setLogin("Vania");
+        newUser2.setName("Va nia");
+        newUser2.setEmail("Vania@yangex.ru");
+        newUser2.setBirthday(LocalDate.of(1993, 12, 15));
+        int newUser2Id = userRepository.create(newUser2).getId();
+
+        Film newFilm = new Film();
+        newFilm.setName("Наитемнейшее искуство");
+        newFilm.setDescription("description");
+        newFilm.setReleaseDate(LocalDate.of(2022, 1, 1));
+        newFilm.setDuration(128);
+        newFilm.setMpa(new Mpa(1, null));
+        int newFilmId = filmRepository.create(newFilm).getId();
+        newFilm.setId(newFilmId);
+        filmRepository.putLike(newFilmId, newUserId);
+        filmRepository.putLike(newFilmId, newUser2Id);
+
+        Film newFilm2 = new Film();
+        newFilm2.setName("История");
+        newFilm2.setDescription("description8");
+        newFilm2.setReleaseDate(LocalDate.of(2001, 11, 22));
+        newFilm2.setDuration(121);
+        newFilm2.setMpa(new Mpa(1, "G"));
+        LinkedHashSet<Genre> genres = new LinkedHashSet<>();
+        genres.add(new Genre(1, "Комедия"));
+        newFilm2.setGenres(genres);
+        int newFilm2Id = filmRepository.create(newFilm2).getId();
+        newFilm2.setId(newFilm2Id);
+        filmRepository.putLike(newFilm2Id, newUserId);
+        filmRepository.putLike(newFilm2Id, newUser2Id);
+        List<Film> films = new ArrayList<>();
+        films.add(newFilm2);
+
+        assertThat(userRepository.recommendations(newUser2Id)).hasSize(0);
+        assertThat(userRepository.recommendations(newUserId)).hasSize(0);
     }
 }

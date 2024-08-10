@@ -37,10 +37,10 @@ public class JdbcFilmRepository implements FilmRepository {
     @Override
     public Optional<Film> getDyId(final int id) {
         String sql = "SELECT * " +
-                "FROM films f " +
-                "JOIN mpa m ON f.mpa_id = m.mpa_id " +
-                "LEFT JOIN film_genres fg ON f.film_id = fg.film_id " +
-                "LEFT JOIN genres g ON fg.genre_id = g.genre_id " +
+                "FROM films AS f " +
+                "JOIN mpa AS m ON f.mpa_id = m.mpa_id " +
+                "LEFT JOIN film_genres AS fg ON f.film_id = fg.film_id " +
+                "LEFT JOIN genres AS g ON fg.genre_id = g.genre_id " +
                 "LEFT JOIN film_directors AS fd ON f.film_id = fd.film_id " +
                 "LEFT JOIN directors AS d ON fd.director_id = d.director_id " +
                 "WHERE f.film_id = :film_id; ";
@@ -51,12 +51,12 @@ public class JdbcFilmRepository implements FilmRepository {
     @Override
     public List<Film> findAll() {
         String sql = "SELECT * " +
-                "FROM films f " +
-                "JOIN mpa m ON f.mpa_id = m.mpa_id " +
+                "FROM films AS f " +
+                "JOIN mpa AS m ON f.mpa_id = m.mpa_id " +
                 "LEFT JOIN film_directors AS fd ON f.film_id = fd.film_id " +
                 "LEFT JOIN directors AS d ON fd.director_id = d.director_id " +
-                "LEFT JOIN film_genres fg ON f.film_id = fg.film_id " +
-                "LEFT JOIN genres g ON fg.genre_id = g.genre_id; ";
+                "LEFT JOIN film_genres AS fg ON f.film_id = fg.film_id " +
+                "LEFT JOIN genres AS g ON fg.genre_id = g.genre_id; ";
         Map<Integer, Film> films = jdbc.query(sql, Map.of(), filmsExtractor);
         assert films != null;
         return films.values().stream().toList();

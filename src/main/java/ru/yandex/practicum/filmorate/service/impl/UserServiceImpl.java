@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
+import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.repository.UserRepository;
 import ru.yandex.practicum.filmorate.service.UserService;
@@ -84,6 +85,13 @@ public class UserServiceImpl implements UserService {
         validUserEqualsFriend(id, otherId, "Нельзя проверять соответствие друзей у себя и себя");
         log.info("Общие друзья пользователь с id {} и пользователя с id {}", otherId, id);
         return userRepository.getMutualFriends(id, otherId);
+    }
+
+    @Override
+    public List<Film> recommendations(int id) {
+        log.info("Запрос на получение рекомендаций фильмов для пользователя с id {}", id);
+        validId(id);
+        return userRepository.recommendations(id);
     }
 
     private void validUserEqualsFriend(final int id, final int friendId, final String message) {

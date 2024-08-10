@@ -8,8 +8,10 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
+import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.repository.UserRepository;
+import ru.yandex.practicum.filmorate.repository.jdbs.extractor.FilmsExtractor;
 import ru.yandex.practicum.filmorate.repository.jdbs.extractor.UserExtractor;
 import ru.yandex.practicum.filmorate.repository.jdbs.extractor.UsersExtractor;
 
@@ -26,6 +28,7 @@ public class JdbcUserRepository implements UserRepository {
     NamedParameterJdbcOperations jdbc;
     UserExtractor userExtractor;
     UsersExtractor usersExtractor;
+    FilmsExtractor filmsExtractor;
 
     @Override
     public Optional<User> getById(final int id) {
@@ -120,5 +123,37 @@ public class JdbcUserRepository implements UserRepository {
                 "WHERE us.user_id = :other_id));";
 
         return jdbc.query(sql, Map.of("user_id", id, "other_id", otherId), usersExtractor);
+    }
+
+    @Override
+    public List<Film> recommendations(int id) {
+        String sql = "SELECT * " +
+                "FROM likes AS l " +
+                "LEFT JOIN films AS f ON l.film_id = f.film_id " +
+                "LEFT JOIN film_genres AS fg ON f.film_id = fg.film_id " +
+                "LEFT JOIN genres AS g ON fg.genre_id = g.genre_id " +
+                "LEFT JOIN mpa AS m ON f.mpa_id = m.mpa_id " +
+                "LEFT JOIN film_directors AS fd ON f.film_id = fd.film_id " +
+                "LEFT JOIN directors AS d ON fd.director_id = d.director_id " +
+                "WHERE l.user_id IN ( " +
+                "SELECT user_id " +
+                "FROM likes " +
+                "WHERE film_id IN ( " +
+                "SELECT film_id " +
+                "FROM likes " +
+                "WHERE user_id = :user_id ) " +
+                "GROUP BY user_id " +
+                "ORDER BY COUNT(film_id) DESC " +
+                "LIMIT 3) " +
+                "AND l.film_id NOT IN (" +
+                "SELECT film_id " +
+                "FROM likes " +
+                "WHERE user_id = :user_id) " +
+                "GROUP BY l.film_id " +
+                "ORDER BY COUNT(l.film_id) DESC " +
+                "LIMIT 1; ";
+        Map<Integer, Film> films = jdbc.query(sql, Map.of("user_id", id), filmsExtractor);
+        assert films != null;
+        return films.values().stream().toList();
     }
 }
