@@ -35,7 +35,7 @@ public class JdbcFilmRepository implements FilmRepository {
     FilmsExtractor filmsExtractor;
 
     @Override
-    public Optional<Film> getDyId(final int id) {
+    public Optional<Film> getById(final int id) {
         String sql = "SELECT * " +
                 "FROM films AS f " +
                 "JOIN mpa AS m ON f.mpa_id = m.mpa_id " +
@@ -65,7 +65,7 @@ public class JdbcFilmRepository implements FilmRepository {
     @Override
     public Film create(final Film film) {
         KeyHolder keyHolder = new GeneratedKeyHolder();
-        String sql = "INSERT INTO FILMS (name, description, release_date, duration, mpa_id) " +
+        String sql = "INSERT INTO films (name, description, release_date, duration, mpa_id) " +
                 "VALUES (:name, :description, :release_date, :duration, :mpa_id); ";
         Map<String, Object> params = new HashMap<>();
         params.put("name", film.getName());

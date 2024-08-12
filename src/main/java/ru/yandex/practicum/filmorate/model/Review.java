@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.FieldDefaults;
@@ -15,6 +16,7 @@ import java.util.List;
  * Review.
  */
 @Data
+@AllArgsConstructor
 @EqualsAndHashCode(exclude = {"id"})
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class Review {
@@ -25,10 +27,10 @@ public class Review {
     String content;
     @NotNull
     @JsonProperty("isPositive")
-    final boolean isPositive;
+    final Boolean isPositive;
     @NotNull
     final Integer userId;
     @NotNull
     final Integer filmId;
-    List<Integer> useful;
+    int useful;
 }

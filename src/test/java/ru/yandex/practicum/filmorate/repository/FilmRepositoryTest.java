@@ -29,7 +29,7 @@ public class FilmRepositoryTest {
     @Order(1)
     @DisplayName("FilmRepository_getById")
     void getByIdTest() {
-        Optional<Film> filmOptional = filmRepository.getDyId(1);
+        Optional<Film> filmOptional = filmRepository.getById(1);
         assertThat(filmOptional)
                 .isPresent()
                 .hasValueSatisfying(film -> {

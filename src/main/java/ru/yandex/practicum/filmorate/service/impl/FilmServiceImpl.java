@@ -37,7 +37,7 @@ public class FilmServiceImpl implements FilmService {
     public Film getById(final int id) {
         log.info("Запрос на получение фильма с id = {}", id);
         validId(id);
-        return filmRepository.getDyId(id)
+        return filmRepository.getById(id)
                 .orElseThrow(() -> new NotFoundException("Фильма с id = " + id + " не существует"));
     }
 

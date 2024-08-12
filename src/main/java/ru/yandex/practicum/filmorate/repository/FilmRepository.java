@@ -4,7 +4,7 @@ import ru.yandex.practicum.filmorate.model.Film;
 import java.util.*;
 
 public interface FilmRepository {
-    Optional<Film> getDyId(int id);
+    Optional<Film> getById(int id);
 
     List<Film> findAll();
 
