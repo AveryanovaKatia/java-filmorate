@@ -1,6 +1,8 @@
 package ru.yandex.practicum.filmorate.service.impl;
 
+import ru.yandex.practicum.filmorate.model.Feed;
 import ru.yandex.practicum.filmorate.model.Review;
+import ru.yandex.practicum.filmorate.repository.FeedRepository;
 import ru.yandex.practicum.filmorate.repository.FilmRepository;
 import ru.yandex.practicum.filmorate.repository.ReviewRepository;
 import ru.yandex.practicum.filmorate.service.ReviewService;
@@ -22,11 +24,12 @@ public class ReviewServiceImpl implements ReviewService {
     ReviewRepository reviewRepository;
     UserRepository userRepository;
     FilmRepository filmRepository;
+    FeedRepository feedRepository;
 
     @Override
     public Review getById(final int id) {
         log.info("Запрос на получение отзыва с id = {}", id);
-        validId(id);
+        //validId(id);
         return reviewRepository.getById(id)
                 .orElseThrow(() -> new NotFoundException("Отзыва с id = " + id + " не существует"));
     }
@@ -49,6 +52,7 @@ public class ReviewServiceImpl implements ReviewService {
         validIdFilm(review.getFilmId());
         final Review newReview = reviewRepository.create(review);
         log.info("Отзыв успешно добавлен под id {}", newReview.getId());
+        feedRepository.create(new Feed(review.getUserId(), "REVIEW", "ADD", review.getId()));
         return newReview;
     }
 
@@ -60,13 +64,16 @@ public class ReviewServiceImpl implements ReviewService {
         validIdFilm(review.getFilmId());
         final Review newReview = reviewRepository.update(review);
         log.info("Отзыв с id {} успешно обновлен", newReview.getId());
+        feedRepository.create(new Feed(review.getUserId(), "REVIEW", "UPDATE", review.getId()));
         return newReview;
     }
 
     @Override
     public void delete(final int id) {
         log.info("Запрос на удаление отзыва с id {}", id);
-        validId(id);
+        //validId(id);
+        feedRepository.create(new Feed(getById(id).getUserId(), "REVIEW", "REMOVE",
+                id));
         reviewRepository.delete(id);
     }
 

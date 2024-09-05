@@ -82,7 +82,7 @@ public class FilmRepositoryTest {
     }
 
     @Test
-    //@Order(3)
+    @Order(3)
     @DisplayName("FilmRepository_create")
     void createTest() {
         Film newFilm = new Film();
@@ -133,4 +133,12 @@ public class FilmRepositoryTest {
                         }
                 );
     }
+
+    @Test
+    @Order(5)
+    @DisplayName("FilmRepository_search")
+    void searchTest() {
+
+    }
+
 }

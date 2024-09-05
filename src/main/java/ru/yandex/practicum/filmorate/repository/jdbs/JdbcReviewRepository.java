@@ -29,7 +29,7 @@ public class JdbcReviewRepository implements ReviewRepository {
     @Override
     public Optional<Review> getById(final int id) {
         String sql = "SELECT r.*, " +
-                "SUM(rl.user_id) AS useful " +
+                "COUNT(rl.user_id) AS useful " +
                 "FROM reviews AS r " +
                 "LEFT JOIN review_likes AS rl ON r.review_id = rl.review_id " +
                 "WHERE r.review_id = :review_id " +
@@ -52,7 +52,7 @@ public class JdbcReviewRepository implements ReviewRepository {
     @Override
     public List<Review> getAll(final int filmId, final int count) {
         String s = "SELECT r.*, " +
-                "SUM(rl.user_id) AS useful " +
+                "COUNT(rl.user_id) AS useful " +
                 "FROM reviews AS r " +
                 "LEFT JOIN review_likes AS rl ON r.review_id = rl.review_id ";
 
@@ -65,7 +65,7 @@ public class JdbcReviewRepository implements ReviewRepository {
             params = Map.of("count", count);
         } else {
             sql = s + "WHERE r.film_id = :film_id " +
-                    "GROUP BY r.review_id " +
+                    "GROUP BY r.film_id, r.review_id " +
                     "LIMIT :count; ";
             params = Map.of("count", count,  "film_id", filmId);
         }
@@ -146,7 +146,7 @@ public class JdbcReviewRepository implements ReviewRepository {
 
     @Override
     public void deleteDislike(final int id, final int userId) {
-        String sql = "DELETE FROM review_dislikes " +
+        String sql = "DELETE FROM review_likes " +
                 "WHERE review_id = :review_id AND user_id = :user_id AND review_like = -1; ";
         jdbc.update(sql, Map.of("review_id", id, "user_id", userId));
     }

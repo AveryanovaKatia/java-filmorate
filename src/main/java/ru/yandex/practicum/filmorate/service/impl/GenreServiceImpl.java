@@ -19,7 +19,6 @@ import java.util.List;
 public class GenreServiceImpl implements GenreService {
     GenreRepository genreRepository;
 
-
     @Override
     public List<Genre> findAll() {
         log.info("Запрос на получение всех возможных жанров");

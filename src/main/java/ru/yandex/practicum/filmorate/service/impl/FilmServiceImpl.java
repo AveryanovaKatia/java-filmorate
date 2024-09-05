@@ -9,6 +9,7 @@ import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.*;
 import ru.yandex.practicum.filmorate.repository.DirectorRepository;
+import ru.yandex.practicum.filmorate.repository.FeedRepository;
 import ru.yandex.practicum.filmorate.repository.FilmRepository;
 import ru.yandex.practicum.filmorate.repository.GenreRepository;
 import ru.yandex.practicum.filmorate.repository.MpaRepository;
@@ -32,6 +33,7 @@ public class FilmServiceImpl implements FilmService {
     GenreRepository genreRepository;
     MpaRepository mpaRepository;
     DirectorRepository directorRepository;
+    FeedRepository feedRepository;
 
     @Override
     public Film getById(final int id) {
@@ -84,6 +86,7 @@ public class FilmServiceImpl implements FilmService {
         validId(id);
         validIdUser(userId);
         filmRepository.putLike(id, userId);
+        feedRepository.create(new Feed(userId, "LIKE", "ADD", id));
         log.info("Пользователь с id {} поставил like фильму с id {}", userId, id);
     }
 
@@ -92,6 +95,7 @@ public class FilmServiceImpl implements FilmService {
         log.info("Пользователь с id {} хочет удалить like у фильма с id {}", userId, id);
         validId(id);
         validIdUser(userId);
+        feedRepository.create(new Feed(userId, "LIKE", "REMOVE", id));
         filmRepository.deleteLike(id, userId);
         log.info("Пользователь с id {} удалил like у фильма с id {}", userId, id);
     }

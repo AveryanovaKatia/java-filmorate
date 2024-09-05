@@ -60,7 +60,7 @@ public class FilmController {
         filmService.deleteLike(id, userId);
     }
 
-    @GetMapping("/films/popular")
+     @GetMapping("/films/popular")
     public List<Film> getBestFilm(@RequestParam(defaultValue = "10") @Positive final int count) {
         return filmService.getBestFilm(count);
     }

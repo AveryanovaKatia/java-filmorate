@@ -16,15 +16,16 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import ru.yandex.practicum.filmorate.group.UpdateGroup;
+import ru.yandex.practicum.filmorate.model.Feed;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.service.UserService;
 
 import java.util.List;
 
-
 @RestController
 @RequiredArgsConstructor
+@Validated
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class UserController {
     UserService userService;
@@ -80,5 +81,10 @@ public class UserController {
     @GetMapping("/users/{id}/recommendations")
     public List<Film> recommendations(@PathVariable final int id) {
         return userService.recommendations(id);
+    }
+
+    @GetMapping("/users/{id}/feed")
+    public List<Feed> getFeeds(@PathVariable final int id) {
+        return userService.getFeeds(id);
     }
 }

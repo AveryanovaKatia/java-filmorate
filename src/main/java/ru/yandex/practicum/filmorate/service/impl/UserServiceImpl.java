@@ -7,8 +7,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
+import ru.yandex.practicum.filmorate.model.Feed;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.repository.FeedRepository;
 import ru.yandex.practicum.filmorate.repository.UserRepository;
 import ru.yandex.practicum.filmorate.service.UserService;
 import java.util.List;
@@ -20,6 +22,7 @@ import java.util.Objects;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class UserServiceImpl implements UserService {
     UserRepository userRepository;
+    FeedRepository feedRepository;
 
     @Override
     public User getById(final int id) {
@@ -38,6 +41,9 @@ public class UserServiceImpl implements UserService {
     @Override
     public User create(final User user) {
         log.info("Запрос на добавление пользователя");
+        if (user.getName().isEmpty()) {
+            user.setName(user.getLogin());
+        }
         User newUser = userRepository.create(user);
         log.info("Пользователь успешно добавлен под id {}", user.getId());
         return newUser;
@@ -64,6 +70,7 @@ public class UserServiceImpl implements UserService {
         validUserEqualsFriend(id, friendId, "Нельзя добавить пользователя в друзья к самому себе");
         userRepository.addNewFriend(id, friendId);
         log.info("Пользователь с id {} успешно добавлен в друзья к пользователю с id {}", friendId, id);
+        feedRepository.create(new Feed(id, "FRIEND", "ADD", friendId));
     }
 
     @Override
@@ -71,6 +78,7 @@ public class UserServiceImpl implements UserService {
         validUserEqualsFriend(id, friendId, "Нельзя удалить пользователя из друзей у самого себя");
         userRepository.deleteFriend(id, friendId);
         log.info("Пользователь с id {} успешно удален из друзей у пользователя с id {}", friendId, id);
+        feedRepository.create(new Feed(id, "FRIEND", "REMOVE", friendId));
     }
 
     @Override
@@ -92,6 +100,17 @@ public class UserServiceImpl implements UserService {
         log.info("Запрос на получение рекомендаций фильмов для пользователя с id {}", id);
         validId(id);
         return userRepository.recommendations(id);
+    }
+
+    @Override
+    public List<Feed> getFeeds(int id) {
+        log.info("Запрос на получение всех действий пользователя с id {}", id);
+        validId(id);
+        List<Feed> feeds = feedRepository.getUserFeeds(id);
+        if (feeds.isEmpty()) {
+            throw new NotFoundException("У данного пользователя нет действий");
+        }
+        return feeds;
     }
 
     private void validUserEqualsFriend(final int id, final int friendId, final String message) {
