@@ -19,13 +19,14 @@ import java.util.List;
 public class GenreController {
     GenreService genreService;
 
+    @GetMapping("/genres/{id}")
+    public Genre findById(@PathVariable @Positive final int id) {
+        return genreService.findById(id);
+    }
+
     @GetMapping("/genres")
     public List<Genre> findAll() {
         return genreService.findAll();
     }
 
-    @GetMapping("/genres/{id}")
-    public Genre findById(@PathVariable @Positive final int id) {
-        return genreService.findById(id);
-    }
 }

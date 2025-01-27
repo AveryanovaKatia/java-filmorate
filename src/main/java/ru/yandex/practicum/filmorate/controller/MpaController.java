@@ -20,13 +20,13 @@ import java.util.List;
 public class MpaController {
     MpaService mpaService;
 
-    @GetMapping("/mpa")
-    public List<Mpa> findAll() {
-        return mpaService.findAll();
-    }
-
     @GetMapping("/mpa/{id}")
     public Mpa findById(@PathVariable @Positive final int id) {
         return mpaService.findById(id);
+    }
+
+    @GetMapping("/mpa")
+    public List<Mpa> findAll() {
+        return mpaService.findAll();
     }
 }
